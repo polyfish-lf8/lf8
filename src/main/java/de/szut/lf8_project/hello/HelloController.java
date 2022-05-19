@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "hello")
+
 public class HelloController {
     private final HelloService service;
     private final HelloMapper helloMapper;
