@@ -4,18 +4,32 @@ import de.szut.lf8_project.testcontainers.AbstractIntegrationTest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-
+import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.within;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class StoreAndFindIT extends AbstractIntegrationTest {
+public class PostIT extends AbstractIntegrationTest {
+
 
     @Test
+    void authorization() throws Exception {
+        final String content = """
+                {
+                    "message": "Foo"
+                }
+                """;
+
+        final var contentAsString = this.mockMvc.perform(post("/hello/").content(content).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "user")
     void storeAndFind() throws Exception {
         final String content = """
                 {

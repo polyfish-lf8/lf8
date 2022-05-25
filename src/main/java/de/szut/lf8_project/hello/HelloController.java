@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -66,9 +67,9 @@ public class HelloController {
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "resource not found",
                     content = @Content)})
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteHelloById(@RequestParam long id) {
+    public void deleteHelloById(@PathVariable long id) {
         var entity = this.service.readById(id);
         if (entity == null) {
             throw new ResourceNotFoundException("HelloEntity not found on id = " + id);
