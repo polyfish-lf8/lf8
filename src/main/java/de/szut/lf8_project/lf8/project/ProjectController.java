@@ -36,6 +36,8 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.BAD_REQUEST, description = "invalid JSON posted",
                     content = @Content),
             @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
     @PostMapping(path = "create")
