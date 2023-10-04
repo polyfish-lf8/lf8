@@ -1,4 +1,4 @@
-package de.szut.lf8_project.lf8.Entity;
+package de.szut.lf8_project.lf8.projekt;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.sql.Time;
 @Setter
 @Entity
 @Table(name = "projekt")
-public class ProjektEntity {
+public class ProjectEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class ProjektEntity {
     private String bezeichnung;
     private Time StartDatum, EndDatum;
 
-    public ProjektEntity(int va_mitarbeiter_id, int va_kunden_id, String bezeichnung) {
+    public ProjectEntity(int va_mitarbeiter_id, int va_kunden_id, String bezeichnung) {
         this.va_mitarbeiter_id = va_mitarbeiter_id;
         this.va_kunden_id = va_kunden_id;
         this.bezeichnung = bezeichnung;
