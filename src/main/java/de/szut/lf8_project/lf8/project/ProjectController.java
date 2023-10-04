@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +43,7 @@ public class ProjectController {
                     content = @Content)
     })
     @PostMapping(path = "create")
-    public ProjectGetDto create(@RequestBody @Valid ProjectCreateDto dto) {
-        return mapper.mapToGetDto(service.create(mapper.mapCreateDtoToEntity(dto)));
+    public ResponseEntity<ProjectGetDto> create(@RequestBody @Valid ProjectCreateDto dto) {
+        return new ResponseEntity<>(mapper.mapToGetDto(service.create(mapper.mapCreateDtoToEntity(dto))), HttpStatus.CREATED);
     }
 }

@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CreateIT extends AbstractIntegrationTest {
     @Test
     public void authorization() throws Exception {
-        this.mockMvc.perform(delete("/lf8/project/create"))
+        this.mockMvc.perform(post("/lf8/project/create"))
                 .andExpect(status().isUnauthorized());
     }
 
