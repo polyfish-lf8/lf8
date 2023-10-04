@@ -1,8 +1,9 @@
 package de.szut.lf8_project.lf8.project;
 
-import de.szut.lf8_project.hello.dto.HelloGetDto;
 import de.szut.lf8_project.lf8.project.dto.ProjectCreateDto;
 import de.szut.lf8_project.lf8.project.dto.ProjectGetDto;
+import de.szut.lf8_project.utils.HTTPCodes;
+import de.szut.lf8_project.utils.MediaTypes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +17,6 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "project")
-
 public class ProjectController {
     private final ProjectService service;
     private final ProjectMapper mapper;
@@ -26,18 +26,18 @@ public class ProjectController {
         this.mapper = mapper;
     }
 
-    @Operation(summary = "Creates a new ProjectEntity using its required parameters")
+    @Operation(summary = "Creates a new project using its required parameters")
     @ApiResponses(value = {
-            @ApiResponse(responseCode =  "201", description = "creation successful", content = {
-                    @Content(mediaType = "application/json",
+            @ApiResponse(responseCode =  HTTPCodes.CREATED, description = "creation successful", content = {
+                    @Content(mediaType = MediaTypes.JSON,
                             schema = @Schema(implementation = ProjectGetDto.class))
             }),
-            @ApiResponse(responseCode = "400", description = "invalid JSON posted",
+            @ApiResponse(responseCode = HTTPCodes.BAD_REQUEST, description = "invalid JSON posted",
                     content = @Content),
-            @ApiResponse(responseCode = "401", description = "not authorized",
+            @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
                     content = @Content)
     })
     public ProjectGetDto create(@RequestBody @Valid ProjectCreateDto dto) {
-        return null;
+        return mapper.mapToGetDto(service.create(mapper.mapCreateDtoToEntity(dto)));
     }
 }

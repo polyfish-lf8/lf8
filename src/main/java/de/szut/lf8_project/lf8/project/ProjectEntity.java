@@ -9,12 +9,12 @@ import javax.persistence.*;
 import java.sql.Time;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name = "project")
 public class ProjectEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -14,7 +14,7 @@ public class ProjectService {
     }
 
     public ProjectEntity create(ProjectEntity entity) {
-        return  repository.save(entity);
+        return repository.save(entity);
     }
 
     public List<ProjectEntity> readAll() {
