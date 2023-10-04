@@ -11,10 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class HelloGetDto {
-
     private long id;
-
     private String message;
-
 }
 

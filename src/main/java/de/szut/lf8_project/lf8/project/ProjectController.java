@@ -1,6 +1,6 @@
-package de.szut.lf8_project.lf8.projekt;
+package de.szut.lf8_project.lf8.project;
 
-import de.szut.lf8_project.lf8.projekt.dto.ProjectCreateDto;
+import de.szut.lf8_project.lf8.project.dto.ProjectCreateDto;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "projekt")
+@RequestMapping(value = "project")
 
 public class ProjectController {
     private final ProjectService service;
