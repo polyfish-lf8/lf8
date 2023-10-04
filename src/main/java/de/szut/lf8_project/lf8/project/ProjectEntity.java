@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
-import java.sql.Time;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +21,6 @@ public class ProjectEntity {
     private Long responsibleCustomerEmployeeId;
     private Long responsibleEmployeeId;
     private String description;
-    private Time startDate;
-    private Time endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "project")
+@RequestMapping(value = "lf8/project")
 public class ProjectController {
     private final ProjectService service;
     private final ProjectMapper mapper;
@@ -38,7 +38,7 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
                     content = @Content)
     })
-    @PostMapping
+    @PostMapping(path = "create")
     public ProjectGetDto create(@RequestBody @Valid ProjectCreateDto dto) {
         return mapper.mapToGetDto(service.create(mapper.mapCreateDtoToEntity(dto)));
     }
