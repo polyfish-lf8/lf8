@@ -10,7 +10,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectMapper {
     public ProjectGetDto mapToGetDto(ProjectEntity entity) {
-        return new ProjectGetDto(entity.getId(), entity.getCustomerId(), entity.getResponsibleEmployeeId(), entity.getResponsibleCustomerEmployeeId(), entity.getDescription());
+        return new ProjectGetDto(
+                entity.getId(),
+                entity.getCustomerId(),
+                entity.getResponsibleEmployeeId(),
+                entity.getResponsibleCustomerEmployeeId(),
+                entity.getDescription(),
+                entity.getEmployees(),
+                entity.getStartDate(),
+                entity.getEndDate()
+        );
     }
 
     public ProjectEntity mapCreateDtoToEntity(ProjectCreateDto dto) {
@@ -20,6 +29,9 @@ public class ProjectMapper {
         entity.setResponsibleEmployeeId(dto.getResponsibleEmployeeId());
         entity.setResponsibleCustomerEmployeeId(dto.getResponsibleCustomerEmployeeId());
         entity.setDescription(dto.getDescription());
+        entity.setEmployees(dto.getEmployees());
+        entity.setStartDate(dto.getStartDate());
+        entity.setEndDate(dto.getEndDate());
 
         return entity;
     }
