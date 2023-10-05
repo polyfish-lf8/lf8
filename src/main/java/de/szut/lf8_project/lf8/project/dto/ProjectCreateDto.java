@@ -23,6 +23,7 @@ import java.util.Objects;
 public class ProjectCreateDto {
 
     @Min(0)
+    @NotNull
     private Long customerId;
 
     @Min(0)
@@ -37,17 +38,21 @@ public class ProjectCreateDto {
     private List<Long> employees;
 
     @Size(min = 1)
+    private List<String> skills;
+
+    @Size(min = 1)
     @NotNull
     private String description;
 
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public ProjectCreateDto(Long customerId, Long responsibleEmployeeId, Long responsibleCustomerEmployeeId, List<Long> employees, String description, LocalDate startDate, LocalDate endDate) {
+    public ProjectCreateDto(Long customerId, Long responsibleEmployeeId, Long responsibleCustomerEmployeeId, List<Long> employees, List<String> skills, String description, LocalDate startDate, LocalDate endDate) {
         this.customerId = customerId;
         this.responsibleEmployeeId = responsibleEmployeeId;
         this.responsibleCustomerEmployeeId = responsibleCustomerEmployeeId;
         this.employees = employees;
+        this.skills = skills;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;

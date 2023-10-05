@@ -18,6 +18,7 @@ public class ProjectGetDto {
     private Long responsibleCustomerEmployeeId;
     private String description;
     private List<Long> employees;
+    private List<String> skills;
     private LocalDate startDate;
     private LocalDate endDate;
 }

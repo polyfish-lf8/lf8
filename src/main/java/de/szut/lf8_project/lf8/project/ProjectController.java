@@ -1,5 +1,7 @@
 package de.szut.lf8_project.lf8.project;
 
+import de.szut.employees.EmployeeAPI;
+import de.szut.lf8_project.exceptionHandling.InvalidDataException;
 import de.szut.lf8_project.lf8.project.dto.ProjectCreateDto;
 import de.szut.lf8_project.lf8.project.dto.ProjectGetDto;
 import de.szut.lf8_project.utils.HTTPCodes;
@@ -45,6 +47,19 @@ public class ProjectController {
     @PostMapping(path = "create")
     public ResponseEntity<ProjectGetDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid ProjectCreateDto dto) throws IOException {
         ProjectEntity entity = mapper.mapCreateDtoToEntity(dto);
+
+        for(Long employeeID : entity.getEmployees()) {
+            int qualifications = 0;
+            for (String skill : EmployeeAPI.getInstance().findEmployeeById(employeeID, authToken).getSkillSet()) {
+                if(entity.getSkills().contains(skill)) {
+                    qualifications++;
+                }
+            }
+            if(qualifications < 1) {
+                throw new InvalidDataException("Not skilled enough for this Project.");
+            }
+        }
+
         return new ResponseEntity<>(mapper.mapToGetDto(service.create(entity)), HttpStatus.CREATED);
     }
 
