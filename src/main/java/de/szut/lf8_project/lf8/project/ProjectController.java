@@ -42,7 +42,7 @@ public class ProjectController {
                     content = @Content)
     })
     @PostMapping(path = "create")
-    public ResponseEntity<ProjectGetDto> create(@RequestBody @Valid ProjectCreateDto dto) {
+    public ResponseEntity<ProjectGetDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid ProjectCreateDto dto) {
         ProjectEntity entity = mapper.mapCreateDtoToEntity(dto);
         return new ResponseEntity<>(mapper.mapToGetDto(service.create(entity)), HttpStatus.CREATED);
     }
