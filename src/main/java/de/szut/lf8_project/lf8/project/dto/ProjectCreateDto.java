@@ -23,7 +23,6 @@ import java.util.Objects;
 public class ProjectCreateDto {
 
     @Min(0)
-    @NotNull
     private Long customerId;
 
     @Min(0)
@@ -61,5 +60,9 @@ public class ProjectCreateDto {
                 if(employees.stream().filter(employee -> Objects.equals(employee, i)).count() > 1)
                     throw new InvalidDataException(MessageFormat.format("The employee with the ID: {0} is given more than one time", i));
             }
+
+        if(customerId == null) {
+            throw new InvalidDataException("The Customer ID is not existent");
+        }
     }
 }
