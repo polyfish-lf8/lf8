@@ -35,4 +35,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn '-Dtest=de.szut.lf8_project.lf8.project.*IT' -B package --file pom.xml
