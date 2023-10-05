@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,4 +17,7 @@ public class ProjectGetDto {
     private Long responsibleEmployeeId;
     private Long responsibleCustomerEmployeeId;
     private String description;
+    private List<Long> employees;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }
