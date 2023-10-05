@@ -12,6 +12,7 @@ import java.io.IOException;
 
 @AllArgsConstructor
 public class EmployeeAPI {
+    private static EmployeeAPI instance;
     private final HttpsRequests client = new HttpsRequests();
     private final String baseEmployeesURL = "https://employee.szut.dev/employees";
     private final ObjectMapper mapper = new ObjectMapper();
@@ -44,5 +45,12 @@ public class EmployeeAPI {
             throw new InvalidDataException(String.format("Something went wrong during the request to the employees API. Status code: %d", response.code()));
 
         return mapper.readValue(response.body().string(), EmployeeResponseDTO[].class);
+    }
+
+    public static EmployeeAPI getInstance() {
+        if(instance == null)
+            instance = new EmployeeAPI();
+
+        return instance;
     }
 }
