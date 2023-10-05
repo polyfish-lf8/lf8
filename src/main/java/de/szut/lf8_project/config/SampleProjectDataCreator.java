@@ -5,6 +5,7 @@ import de.szut.lf8_project.hello.HelloRepository;
 import de.szut.lf8_project.lf8.project.ProjectEntity;
 import de.szut.lf8_project.lf8.project.ProjectRepository;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Component
-public class SampleProjectDataCreator {
+public class SampleProjectDataCreator implements ApplicationRunner {
     private final ProjectRepository repository;
 
     public SampleProjectDataCreator(ProjectRepository repository) {
