@@ -13,9 +13,9 @@ import java.io.IOException;
 @AllArgsConstructor
 public class EmployeeAPI {
     private static EmployeeAPI instance;
+    private final ObjectMapper mapper = new ObjectMapper();
     private final HttpsRequests client = new HttpsRequests();
     private final String baseEmployeesURL = "https://employee.szut.dev/employees";
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public EmployeeResponseDTO findEmployeeById(Long id, String oauthToken) throws IOException, InvalidDataException {
         Request request = new Request.Builder()
