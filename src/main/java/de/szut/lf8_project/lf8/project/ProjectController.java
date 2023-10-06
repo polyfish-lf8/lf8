@@ -54,7 +54,7 @@ public class ProjectController {
                 }
             }
             if(qualifications < 1) {
-                throw new InvalidDataException("Not skilled enough for this Project.");
+                throw new InvalidDataException("Not skilled enough for this project.");
             }
         }
 
