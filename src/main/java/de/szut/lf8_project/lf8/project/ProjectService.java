@@ -22,11 +22,11 @@ public class ProjectService {
     }
 
     public ProjectEntity readById(long id) {
-        Optional<ProjectEntity> optionalQualification = this.repository.findById(id);
-        if (optionalQualification.isEmpty()) {
+        Optional<ProjectEntity> queryedProject = this.repository.findById(id);
+        if (queryedProject.isEmpty()) {
             return null;
         }
-        return optionalQualification.get();
+        return queryedProject.get();
     }
 
     public void delete(ProjectEntity entity) {

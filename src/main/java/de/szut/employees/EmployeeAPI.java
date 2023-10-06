@@ -10,7 +10,6 @@ import okhttp3.Response;
 
 import java.io.IOException;
 
-@AllArgsConstructor
 public class EmployeeAPI {
     private static EmployeeAPI instance;
     private final ObjectMapper mapper = new ObjectMapper();
