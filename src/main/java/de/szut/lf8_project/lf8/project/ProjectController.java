@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping(value = "lf8/project")
@@ -47,16 +48,20 @@ public class ProjectController {
     @PostMapping(path = "create")
     public ResponseEntity<ProjectGetDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid ProjectCreateDto dto) throws IOException {
         ProjectEntity entity = mapper.mapCreateDtoToEntity(dto);
-
-        for(Long employeeID : entity.getEmployees()) {
-            int qualifications = 0;
-            for (String skill : EmployeeAPI.getInstance().findEmployeeById(employeeID, authToken).getSkillSet()) {
-                if(entity.getSkills().contains(skill)) {
-                    qualifications++;
+        if(entity.getEmployees() != null) {
+            for(Long employeeID : entity.getEmployees()) {
+                int qualifications = 0;
+                ArrayList<String> employeeSkillSet = EmployeeAPI.getInstance().findEmployeeById(employeeID, authToken).getSkillSet();
+                if(employeeSkillSet.size() > 0) {
+                    for (String skill : employeeSkillSet) {
+                        if(entity.getSkillSet().contains(skill)) {
+                            qualifications++;
+                        }
+                    }
                 }
-            }
-            if(qualifications < 1) {
-                throw new InvalidDataException("Not skilled enough for this project.");
+                if(qualifications < 1) {
+                    throw new InvalidDataException("Not skilled enough for this project.");
+                }
             }
         }
 
