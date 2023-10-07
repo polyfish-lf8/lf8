@@ -29,7 +29,7 @@ public class ProjectEntity {
 
     @ElementCollection
     @CollectionTable
-    private List<String> skills = new ArrayList<>();
+    private List<String> skillSet = new ArrayList<>();
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
