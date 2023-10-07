@@ -38,7 +38,7 @@ public class ProjectCreateDto {
     private List<Long> employees;
 
     @Size(min = 1)
-    private List<String> skills;
+    private List<String> skillSet;
 
     @Size(min = 1)
     @NotNull
@@ -47,12 +47,12 @@ public class ProjectCreateDto {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public ProjectCreateDto(Long customerId, Long responsibleEmployeeId, Long responsibleCustomerEmployeeId, List<Long> employees, List<String> skills, String description, LocalDate startDate, LocalDate endDate) {
+    public ProjectCreateDto(Long customerId, Long responsibleEmployeeId, Long responsibleCustomerEmployeeId, List<Long> employees, List<String> skillSet, String description, LocalDate startDate, LocalDate endDate) {
         this.customerId = customerId;
         this.responsibleEmployeeId = responsibleEmployeeId;
         this.responsibleCustomerEmployeeId = responsibleCustomerEmployeeId;
         this.employees = employees;
-        this.skills = skills;
+        this.skillSet = skillSet;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
