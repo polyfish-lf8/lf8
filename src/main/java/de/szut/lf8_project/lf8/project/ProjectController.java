@@ -1,6 +1,7 @@
 package de.szut.lf8_project.lf8.project;
 
 import de.szut.employees.EmployeeAPI;
+import de.szut.employees.dto.EmployeeResponseDTO;
 import de.szut.lf8_project.exceptionHandling.InvalidDataException;
 import de.szut.lf8_project.lf8.project.dto.ProjectCreateDto;
 import de.szut.lf8_project.lf8.project.dto.ProjectGetDto;
@@ -17,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "lf8/project")
@@ -48,18 +49,30 @@ public class ProjectController {
     @PostMapping(path = "create")
     public ResponseEntity<ProjectGetDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid ProjectCreateDto dto) throws IOException {
         ProjectEntity entity = mapper.mapCreateDtoToEntity(dto);
-        if(!entity.getEmployees().isEmpty()) {
-            for(Long employeeID : entity.getEmployees()) {
+
+        List<EmployeeResponseDTO> employees = new ArrayList<>();
+        if(entity.getEmployees() != null) {
+            for(Long id : entity.getEmployees()) {
+                EmployeeResponseDTO queryResult = EmployeeAPI.getInstance().findEmployeeById(id, authToken);
+
+                if(queryResult == null)
+                    throw new InvalidDataException(MessageFormat.format("The employee with the ID: {0} was not found!", id));
+
+                employees.add(queryResult);
+            }
+        }
+
+        if(entity.getEmployees() != null && !entity.getEmployees().isEmpty()) {
+            for(EmployeeResponseDTO employee : employees) {
                 int qualifications = 0;
-                ArrayList<String> employeeSkillSet = EmployeeAPI.getInstance().findEmployeeById(employeeID, authToken).getSkillSet();
-                if(employeeSkillSet.size() > 0) {
-                    for (String skill : employeeSkillSet) {
-                        if(entity.getSkillSet().contains(skill)) {
+                if(employee.getSkillSet() != null && !employee.getSkillSet().isEmpty()) {
+                    for (String skill : employee.getSkillSet()) {
+                        if(entity.getSkillSet() != null && entity.getSkillSet().contains(skill)) {
                             qualifications++;
                         }
                     }
                 }
-                if(qualifications < 1) {
+                if(qualifications > 0) {
                     throw new InvalidDataException("Not skilled enough for this project.");
                 }
             }
