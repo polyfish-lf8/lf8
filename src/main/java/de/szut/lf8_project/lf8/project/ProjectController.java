@@ -46,7 +46,7 @@ public class ProjectController {
     @PostMapping(path = "create")
     public ResponseEntity<ProjectGetDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid ProjectCreateDto dto) throws IOException {
         ProjectEntity entity = mapper.mapCreateDtoToEntity(dto);
-        if(entity.getEmployees() != null) {
+        if(!entity.isEmpty()) {
             for(Long employeeID : entity.getEmployees()) {
                 int qualifications = 0;
                 ArrayList<String> employeeSkillSet = EmployeeAPI.getInstance().findEmployeeById(employeeID, authToken).getSkillSet();
