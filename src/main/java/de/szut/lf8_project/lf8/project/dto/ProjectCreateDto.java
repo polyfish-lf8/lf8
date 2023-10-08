@@ -61,7 +61,7 @@ public class ProjectCreateDto {
         if((startDate != null && endDate != null) && startDate.isAfter(endDate))
             throw new InvalidDataException("The dates are not correct");
 
-        if(employees != null)
+        if(employees != null && !employees.isEmpty())
             for(Long i : employees) {
                 if(employees.stream().filter(employee -> Objects.equals(employee, i)).count() > 1)
                     throw new InvalidDataException(MessageFormat.format("The employee with the ID: {0} is given more than one time", i));
