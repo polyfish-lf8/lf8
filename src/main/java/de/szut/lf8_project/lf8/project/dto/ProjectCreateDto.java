@@ -3,6 +3,7 @@ package de.szut.lf8_project.lf8.project.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import de.szut.employees.EmployeeAPI;
 import de.szut.lf8_project.exceptionHandling.InvalidDataException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

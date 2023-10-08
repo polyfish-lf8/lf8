@@ -17,24 +17,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class EmployeeAPIIT extends AbstractIntegrationTest {
-    public static String token;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectionSpecs(List.of(ConnectionSpec.MODERN_TLS))
-                .build();
-
-        Request request = new Request.Builder()
-                .url("https://keycloak.szut.dev/auth/realms/szut/protocol/openid-connect/token")
-                .post(RequestBody.create(MediaType.get("application/x-www-form-urlencoded"), "grant_type=password&client_id=employee-management-service&username=user&password=test"))
-                .build();
-
-        Response response = client.newCall(request).execute();
-        JsonNode node = new ObjectMapper().readTree(response.body().string());
-        token = "Bearer " + node.get("access_token").asText();
-    }
-
     @Test
     public void getFirstEmployee() throws Exception {
         assert EmployeeAPI.getInstance().findEmployeeById(1L, token) != null;
