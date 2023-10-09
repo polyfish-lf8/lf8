@@ -54,7 +54,6 @@ public class CreateIT extends AbstractIntegrationTest {
                 .getContentAsString();
     }
 
-    //TODO: Einen Test der das Enddatum vor das Begindatum packt
 
     @Test
     @WithMockUser(roles = "user")
