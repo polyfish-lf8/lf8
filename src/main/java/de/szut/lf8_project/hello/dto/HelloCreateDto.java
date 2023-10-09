@@ -10,8 +10,6 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 public class HelloCreateDto {
-
-    @Size(min = 3, message = "at least length of 3")
     private String message;
 
     @JsonCreator

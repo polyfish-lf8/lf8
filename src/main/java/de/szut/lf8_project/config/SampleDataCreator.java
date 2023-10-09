@@ -19,7 +19,5 @@ public class SampleDataCreator implements ApplicationRunner {
         repository.save(new HelloEntity("Hallo Welt!"));
         repository.save(new HelloEntity("Schöner Tag heute"));
         repository.save(new HelloEntity("FooBar"));
-
     }
-
 }
