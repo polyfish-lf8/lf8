@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
-import java.lang.reflect.Array;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +26,10 @@ public class ProjectEntity {
     @ElementCollection
     @CollectionTable
     private List<Long> employees = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable
+    private List<String> skillSet = new ArrayList<>();
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;

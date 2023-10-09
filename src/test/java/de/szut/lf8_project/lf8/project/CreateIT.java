@@ -38,7 +38,11 @@ public class CreateIT extends AbstractIntegrationTest {
                 }
                 """;
 
-        this.mockMvc.perform(post("/lf8/project/create").content(content).contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(
+                post("/lf8/project/create")
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(jsonPath("customerId", is(1)))
@@ -50,11 +54,45 @@ public class CreateIT extends AbstractIntegrationTest {
                 .getContentAsString();
     }
 
-    //TODO: Einen Test der das Enddatum vor das Begindatum packt
 
     @Test
     @WithMockUser(roles = "user")
     public void createWithOptionalParameters() throws Exception {
+        String content = """
+                {
+                    "customerId": 1,
+                    "responsibleEmployeeId": 2,
+                    "responsibleCustomerEmployeeId": 3,
+                    "description": "Test description",
+                    "employees": [1, 2],
+                    "startDate": "2023-10-04",
+                    "endDate": "2023-10-06"
+                }
+                """;
+
+        this.mockMvc.perform(
+                post("/lf8/project/create")
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("customerId", is(1)))
+                .andExpect(jsonPath("responsibleEmployeeId", is(2)))
+                .andExpect(jsonPath("responsibleCustomerEmployeeId", is(3)))
+                .andExpect(jsonPath("description", is("Test description")))
+                .andExpect(jsonPath("employees", hasItem(1)))
+                .andExpect(jsonPath("employees", hasItem(2)))
+                .andExpect(jsonPath("startDate", is("2023-10-04")))
+                .andExpect(jsonPath("endDate", is("2023-10-06")))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+    }
+
+    @Test
+    @WithMockUser(roles = "user")
+    public void employeeNotFound() throws Exception {
         String content = """
                 {
                     "customerId": 1,
@@ -67,21 +105,12 @@ public class CreateIT extends AbstractIntegrationTest {
                 }
                 """;
 
-        this.mockMvc.perform(post("/lf8/project/create").content(content).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").exists())
-                .andExpect(jsonPath("customerId", is(1)))
-                .andExpect(jsonPath("responsibleEmployeeId", is(2)))
-                .andExpect(jsonPath("responsibleCustomerEmployeeId", is(3)))
-                .andExpect(jsonPath("description", is("Test description")))
-                .andExpect(jsonPath("employees", hasItem(1)))
-                .andExpect(jsonPath("employees", hasItem(2)))
-                .andExpect(jsonPath("employees", hasItem(3)))
-                .andExpect(jsonPath("startDate", is("2023-10-04")))
-                .andExpect(jsonPath("endDate", is("2023-10-06")))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+        this.mockMvc.perform(
+                        post("/lf8/project/create")
+                                .content(content)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", token))
+                .andExpect(status().isBadRequest());
     }
 
     @ParameterizedTest()

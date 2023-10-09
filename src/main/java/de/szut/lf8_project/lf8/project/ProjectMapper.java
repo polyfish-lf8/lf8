@@ -17,6 +17,7 @@ public class ProjectMapper {
                 entity.getResponsibleCustomerEmployeeId(),
                 entity.getDescription(),
                 entity.getEmployees(),
+                entity.getSkillSet(),
                 entity.getStartDate(),
                 entity.getEndDate()
         );
@@ -30,6 +31,7 @@ public class ProjectMapper {
         entity.setResponsibleCustomerEmployeeId(dto.getResponsibleCustomerEmployeeId());
         entity.setDescription(dto.getDescription());
         entity.setEmployees(dto.getEmployees());
+        entity.setSkillSet(dto.getSkillSet());
         entity.setStartDate(dto.getStartDate());
         entity.setEndDate(dto.getEndDate());
 
