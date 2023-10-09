@@ -58,4 +58,20 @@ public class AbstractIntegrationTest {
         JsonNode node = new ObjectMapper().readTree(response.body().string());
         token = "Bearer " + node.get("access_token").asText();
     }
+
+    @BeforeAll
+    static void getToken() throws IOException {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectionSpecs(List.of(ConnectionSpec.MODERN_TLS))
+                .build();
+
+        Request request = new Request.Builder()
+                .url("https://keycloak.szut.dev/auth/realms/szut/protocol/openid-connect/token")
+                .post(RequestBody.create(MediaType.get("application/x-www-form-urlencoded"), "grant_type=password&client_id=employee-management-service&username=user&password=test"))
+                .build();
+
+        Response response = client.newCall(request).execute();
+        JsonNode node = new ObjectMapper().readTree(response.body().string());
+        token = "Bearer " + node.get("access_token").asText();
+    }
 }
