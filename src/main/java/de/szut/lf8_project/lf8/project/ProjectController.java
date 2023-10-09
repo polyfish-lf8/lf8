@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "lf8/project")
@@ -94,6 +95,6 @@ public class ProjectController {
     })
     @GetMapping (path = "findall")
     public List<ProjectGetDto> findAll(){
-        return  service.readAll().stream().map(e -> mapper.mapToGetDto(e)).collect(Collectors.toList());
+        return service.readAll().stream().map(e -> mapper.mapToGetDto(e)).collect(Collectors.toList());
     }
 }
