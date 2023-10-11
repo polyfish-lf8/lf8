@@ -3,6 +3,7 @@ package de.szut.lf8_project.testcontainers;
 import de.szut.lf8_project.hello.HelloRepository;
 import okhttp3.*;
 import org.junit.jupiter.api.BeforeAll;
+import de.szut.lf8_project.lf8.project.ProjectRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,10 +34,13 @@ public class AbstractIntegrationTest {
 
     @Autowired
     protected HelloRepository helloRepository;
+    @Autowired
+    protected ProjectRepository projectRepository;
 
     @BeforeEach
     void setUp() {
         helloRepository.deleteAll();
+        projectRepository.deleteAll();
     }
 
     @BeforeAll

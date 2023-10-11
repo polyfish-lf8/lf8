@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "lf8/project")
@@ -79,5 +80,21 @@ public class ProjectController {
         }
 
         return new ResponseEntity<>(mapper.mapToGetDto(service.create(entity)), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Gets all of the created projects")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "list of projects", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = ProjectGetDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @GetMapping (path = "get")
+    public List<ProjectGetDto> findAll(){
+        return service.readAll().stream().map(e -> mapper.mapToGetDto(e)).collect(Collectors.toList());
     }
 }
