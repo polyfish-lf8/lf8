@@ -1,6 +1,5 @@
 package de.szut.lf8_project.lf8.project;
 
-import de.szut.lf8_project.hello.HelloEntity;
 import de.szut.lf8_project.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -16,7 +15,7 @@ public class FindAllIT extends AbstractIntegrationTest {
 
     @Test
     public void authorization() throws Exception {
-        this.mockMvc.perform(post("/lf8/project/findall"))
+        this.mockMvc.perform(post("/lf8/project/get"))
                 .andExpect(status().isUnauthorized());
     }
 

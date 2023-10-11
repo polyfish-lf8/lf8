@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,8 +17,8 @@ public class GetProjectDto {
     private Long responsibleEmployeeId;
     private Long responsibleCustomerEmployeeId;
     private String description;
-    private List<Long> employees;
-    private List<String> skillSet;
+    private Set<Long> employees;
+    private Set<String> skillSet;
     private LocalDate startDate;
     private LocalDate endDate;
 }

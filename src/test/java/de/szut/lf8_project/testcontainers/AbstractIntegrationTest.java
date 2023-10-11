@@ -1,6 +1,5 @@
 package de.szut.lf8_project.testcontainers;
 
-import de.szut.lf8_project.hello.HelloRepository;
 import okhttp3.*;
 import org.junit.jupiter.api.BeforeAll;
 import de.szut.lf8_project.lf8.project.ProjectRepository;
@@ -33,13 +32,10 @@ public class AbstractIntegrationTest {
     protected MockMvc mockMvc;
 
     @Autowired
-    protected HelloRepository helloRepository;
-    @Autowired
     protected ProjectRepository projectRepository;
 
     @BeforeEach
     void setUp() {
-        helloRepository.deleteAll();
         projectRepository.deleteAll();
     }
 
