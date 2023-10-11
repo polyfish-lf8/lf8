@@ -33,5 +33,4 @@ public class ProjectEntity {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
-
 }
