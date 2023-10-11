@@ -31,9 +31,6 @@ import java.util.Map;
 public class ProjectController {
     private final ProjectService service;
     private final ProjectMapper mapper;
-    private final Map<Integer, ProjectController> projects = new HashMap<>();
-    private final Map<Integer, String> projectLeaders = new HashMap<>();
-
     public ProjectController(ProjectService service, ProjectMapper mapper) {
         this.service = service;
         this.mapper = mapper;
