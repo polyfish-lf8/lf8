@@ -94,7 +94,7 @@ public class ProjectController {
                     content = @Content)
     })
     @GetMapping (path = "get")
-    public List<GetProjectDto> findAll(){
+    public List<GetProjectDto> findAll() {
         return service.readAll().stream().map(mapper::mapToGetDto).collect(Collectors.toList());
     }
 }
