@@ -3,6 +3,7 @@ package de.szut.lf8_project.lf8.project;
 import de.szut.employees.EmployeeAPI;
 import de.szut.employees.dto.EmployeeResponseDTO;
 import de.szut.lf8_project.exceptionHandling.InvalidDataException;
+import de.szut.lf8_project.exceptionHandling.InvalidDataException;
 import de.szut.lf8_project.lf8.project.dto.ProjectCreateDto;
 import de.szut.lf8_project.lf8.project.dto.ProjectGetDto;
 import de.szut.lf8_project.utils.HTTPCodes;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +23,16 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "lf8/project")
 public class ProjectController {
     private final ProjectService service;
     private final ProjectMapper mapper;
+    private final Map<Integer, ProjectController> projects = new HashMap<>();
+    private final Map<Integer, String> projectLeaders = new HashMap<>();
 
     public ProjectController(ProjectService service, ProjectMapper mapper) {
         this.service = service;
@@ -79,5 +85,17 @@ public class ProjectController {
         }
 
         return new ResponseEntity<>(mapper.mapToGetDto(service.create(entity)), HttpStatus.CREATED);
+    }
+
+    public Response deleteProjecResponse(int projectId, String requestingUser) {
+        if (!projects.containsKey(projectId)) {
+            throw new InvalidDataException("404, Projekt nicht gefunden");
+        }
+
+        if (!requestingUser.equals(projectLeaders.get(projectId))) {
+            throw new InvalidDataException("401, Nicht autorisiert");
+        }
+        projects.remove(projectId);
+        throw new InvalidDataException("200, Projekt erfolgreich gelöscht");
     }
 }
