@@ -93,7 +93,7 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
-    @GetMapping (path = "findall")
+    @GetMapping (path = "get")
     public List<ProjectGetDto> findAll(){
         return service.readAll().stream().map(e -> mapper.mapToGetDto(e)).collect(Collectors.toList());
     }
