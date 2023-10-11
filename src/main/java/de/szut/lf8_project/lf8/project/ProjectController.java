@@ -84,7 +84,7 @@ public class ProjectController {
 
     @Operation(summary = "Get's a Project by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode =  HTTPCodes.OK, description = "getting successful", content = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "getting successful", content = {
                     @Content(mediaType = MediaTypes.JSON,
                             schema = @Schema(implementation = GetProjectDto.class))
             }),
