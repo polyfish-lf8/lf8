@@ -3,8 +3,8 @@ package de.szut.lf8_project.lf8.project;
 import de.szut.employees.EmployeeAPI;
 import de.szut.employees.dto.EmployeeResponseDTO;
 import de.szut.lf8_project.exceptionHandling.InvalidDataException;
-import de.szut.lf8_project.lf8.project.dto.ProjectCreateDto;
-import de.szut.lf8_project.lf8.project.dto.ProjectGetDto;
+import de.szut.lf8_project.lf8.project.dto.CreateProjectDto;
+import de.szut.lf8_project.lf8.project.dto.GetProjectDto;
 import de.szut.lf8_project.utils.HTTPCodes;
 import de.szut.lf8_project.utils.MediaTypes;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ public class ProjectController {
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.CREATED, description = "creation successful", content = {
                     @Content(mediaType = MediaTypes.JSON,
-                            schema = @Schema(implementation = ProjectGetDto.class))
+                            schema = @Schema(implementation = GetProjectDto.class))
             }),
             @ApiResponse(responseCode = HTTPCodes.BAD_REQUEST, description = "invalid JSON posted",
                     content = @Content),
@@ -48,7 +48,7 @@ public class ProjectController {
                     content = @Content)
     })
     @PostMapping(path = "create")
-    public ResponseEntity<ProjectGetDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid ProjectCreateDto dto) throws IOException {
+    public ResponseEntity<GetProjectDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid CreateProjectDto dto) throws IOException {
         ProjectEntity entity = mapper.mapCreateDtoToEntity(dto);
 
         List<EmployeeResponseDTO> employees = new ArrayList<>();
@@ -86,7 +86,7 @@ public class ProjectController {
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "list of projects", content = {
                     @Content(mediaType = MediaTypes.JSON,
-                            schema = @Schema(implementation = ProjectGetDto.class))
+                            schema = @Schema(implementation = GetProjectDto.class))
             }),
             @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
                     content = @Content),
@@ -94,7 +94,7 @@ public class ProjectController {
                     content = @Content)
     })
     @GetMapping (path = "get")
-    public List<ProjectGetDto> findAll(){
-        return service.readAll().stream().map(e -> mapper.mapToGetDto(e)).collect(Collectors.toList());
+    public List<GetProjectDto> findAll(){
+        return service.readAll().stream().map(mapper::mapToGetDto).collect(Collectors.toList());
     }
 }

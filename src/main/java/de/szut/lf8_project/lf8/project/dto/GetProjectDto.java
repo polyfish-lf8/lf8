@@ -5,13 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class ProjectGetDto {
+public class GetProjectDto {
     private Long id;
     private Long customerId;
     private Long responsibleEmployeeId;
