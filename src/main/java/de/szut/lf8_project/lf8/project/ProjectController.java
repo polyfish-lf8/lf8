@@ -86,16 +86,4 @@ public class ProjectController {
 
         return new ResponseEntity<>(mapper.mapToGetDto(service.create(entity)), HttpStatus.CREATED);
     }
-
-    public Response deleteProjecResponse(int projectId, String requestingUser) {
-        if (!projects.containsKey(projectId)) {
-            throw new InvalidDataException("404, Projekt nicht gefunden");
-        }
-
-        if (!requestingUser.equals(projectLeaders.get(projectId))) {
-            throw new InvalidDataException("401, Nicht autorisiert");
-        }
-        projects.remove(projectId);
-        throw new InvalidDataException("200, Projekt erfolgreich gelöscht");
-    }
 }
