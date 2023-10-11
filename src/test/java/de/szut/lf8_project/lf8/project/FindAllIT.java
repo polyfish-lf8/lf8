@@ -23,14 +23,13 @@ public class FindAllIT extends AbstractIntegrationTest {
     @Test
     @WithMockUser(roles = "user")
     void findAll() throws Exception {
-
-        projectRepository.save(new ProjectEntity());
-        projectRepository.save(new ProjectEntity());
+        var ent1 = projectRepository.save(new ProjectEntity());
+        var ent2 = projectRepository.save(new ProjectEntity());
 
         final var contentAsString = this.mockMvc.perform(get("/lf8/project/findall/"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[1].id", is(2)));
+                .andExpect(jsonPath("$[0].id", is(ent1.getId().intValue())))
+                .andExpect(jsonPath("$[1].id", is(ent2.getId().intValue())));
     }
 }

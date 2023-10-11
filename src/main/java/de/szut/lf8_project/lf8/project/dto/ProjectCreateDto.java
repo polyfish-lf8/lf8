@@ -24,6 +24,7 @@ import java.util.Objects;
 public class ProjectCreateDto {
 
     @Min(0)
+    @NotNull
     private Long customerId;
 
     @Min(0)
