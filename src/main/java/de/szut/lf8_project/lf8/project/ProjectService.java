@@ -31,34 +31,21 @@ public class ProjectService {
         }
         return queryedProject.get();
     }
-    public void deleteProjectById(long projectId, User currentUser) {
-        if (!isProjektleiter(currentUser, projectId)) {
+    public void deleteProjectById(long projectId) {
+        Optional<ProjectEntity> projectToDelete = repository.findById(projectId);
+
+        if (projectToDelete.isPresent()) {
+            ProjectEntity project = projectToDelete.get();
+            if (project.getProjectLeader().equals(true)) {
+                repository.delete(project);
+            } else {
+                throw new InvalidDataException("401, Sie sind nicht autorisiert, das Projekt zu löschen");
+            }
+        } else {
             throw new InvalidDataException("404, Projekt nicht gefunden");
         }
-
-        Optional<ProjectEntity> projectToDelete = repository.findById(projectId);
-        if (projectToDelete.isPresent()) {
-            repository.delete(projectToDelete.get());
-        } else {
-            throw new InvalidDataException("401, Nicht autorisiert");
-        }
     }
 
-    public void deleteAllProjects(User currentUser) {
-        if (!isProjektleiter(currentUser)) {
-            throw new InvalidDataException("200, Projekt erfolgreich gelöscht");
-        }
-
-        repository.deleteAll();
-    }
-
-    private boolean isProjektleiter(User user, long projectId) {
-        return true;
-    }
-
-    private boolean isProjektleiter(User user) {
-        return true;
-    }
     public void delete(ProjectEntity entity) {
         this.repository.delete(entity);
     }
@@ -66,5 +53,4 @@ public class ProjectService {
     public void deleteAll() {
         repository.deleteAll();
     }
-
 }
