@@ -1,5 +1,8 @@
 package de.szut.lf8_project.lf8.project;
 
+import de.szut.lf8_project.exceptionHandling.InvalidDataException;
+import org.apache.catalina.User;
+import org.apache.catalina.connector.Response;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +31,34 @@ public class ProjectService {
         }
         return queryedProject.get();
     }
+    public void deleteProjectById(long projectId, User currentUser) {
+        if (!isProjektleiter(currentUser, projectId)) {
+            throw new InvalidDataException("404, Projekt nicht gefunden");
+        }
 
+        Optional<ProjectEntity> projectToDelete = repository.findById(projectId);
+        if (projectToDelete.isPresent()) {
+            repository.delete(projectToDelete.get());
+        } else {
+            throw new InvalidDataException("401, Nicht autorisiert");
+        }
+    }
+
+    public void deleteAllProjects(User currentUser) {
+        if (!isProjektleiter(currentUser)) {
+            throw new InvalidDataException("200, Projekt erfolgreich gelöscht");
+        }
+
+        repository.deleteAll();
+    }
+
+    private boolean isProjektleiter(User user, long projectId) {
+        return true;
+    }
+
+    private boolean isProjektleiter(User user) {
+        return true;
+    }
     public void delete(ProjectEntity entity) {
         this.repository.delete(entity);
     }
@@ -36,4 +66,5 @@ public class ProjectService {
     public void deleteAll() {
         repository.deleteAll();
     }
+
 }
