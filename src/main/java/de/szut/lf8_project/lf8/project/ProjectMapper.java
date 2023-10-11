@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectMapper {
-    public GetProjectDto mapToGetDto(ProjectEntity entity) {
+    public GetProjectDto mapToGetProjectDto(ProjectEntity entity) {
         return new GetProjectDto(
                 entity.getId(),
                 entity.getCustomerId(),
