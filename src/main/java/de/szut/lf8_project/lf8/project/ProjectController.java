@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 public class ProjectController {
     private final ProjectService service;
     private final ProjectMapper mapper;
-    private final Map<Integer, ProjectController> projects = new HashMap<>();
 
     public ProjectController(ProjectService service, ProjectMapper mapper) {
         this.service = service;
