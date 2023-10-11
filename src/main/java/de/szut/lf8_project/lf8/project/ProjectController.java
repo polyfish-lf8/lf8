@@ -97,4 +97,20 @@ public class ProjectController {
     public List<GetProjectDto> findAll() {
         return service.readAll().stream().map(mapper::mapToGetDto).collect(Collectors.toList());
     }
+
+    @Operation(summary = "Deletes a project using it's id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "deletes the given project", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "project not found",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @DeleteMapping("delete/[id]")
+    public void DeleteProject(long projectId) {
+        service.deleteProjectById(projectId);
+    }
 }
