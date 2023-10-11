@@ -1,16 +1,13 @@
 package de.szut.lf8_project.lf8.project;
 
-import de.szut.lf8_project.hello.HelloEntity;
-import de.szut.lf8_project.hello.dto.HelloCreateDto;
-import de.szut.lf8_project.hello.dto.HelloGetDto;
-import de.szut.lf8_project.lf8.project.dto.ProjectCreateDto;
-import de.szut.lf8_project.lf8.project.dto.ProjectGetDto;
+import de.szut.lf8_project.lf8.project.dto.CreateProjectDto;
+import de.szut.lf8_project.lf8.project.dto.GetProjectDto;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectMapper {
-    public ProjectGetDto mapToGetDto(ProjectEntity entity) {
-        return new ProjectGetDto(
+    public GetProjectDto mapToGetDto(ProjectEntity entity) {
+        return new GetProjectDto(
                 entity.getId(),
                 entity.getCustomerId(),
                 entity.getResponsibleEmployeeId(),
@@ -23,7 +20,7 @@ public class ProjectMapper {
         );
     }
 
-    public ProjectEntity mapCreateDtoToEntity(ProjectCreateDto dto) {
+    public ProjectEntity mapCreateDtoToEntity(CreateProjectDto dto) {
         ProjectEntity entity = new ProjectEntity();
 
         entity.setCustomerId(dto.getCustomerId());
