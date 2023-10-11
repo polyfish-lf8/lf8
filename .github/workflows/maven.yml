@@ -8,7 +8,11 @@
 
 name: Java CI with Maven
 
-on: [push, pull_request]
+on:
+  push:
+    [ "master" ]
+  pull_request:
+    [ "master" ]
 
 jobs:
   build:
@@ -24,6 +28,8 @@ jobs:
           POSTGRES_DB: lf8_starter_db
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
