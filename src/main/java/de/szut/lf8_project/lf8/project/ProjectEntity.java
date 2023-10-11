@@ -34,7 +34,4 @@ public class ProjectEntity {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public Object getProjectLeader() {
-        return null;
-    }
 }
