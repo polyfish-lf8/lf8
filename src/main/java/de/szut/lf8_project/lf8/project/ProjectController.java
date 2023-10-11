@@ -52,7 +52,7 @@ public class ProjectController {
         ProjectEntity entity = mapper.mapCreateDtoToEntity(dto);
 
         List<EmployeeResponseDTO> employees = new ArrayList<>();
-        if(entity.getEmployees() != null) {
+        if(entity.getEmployees() != null && !entity.getEmployees().isEmpty()) {
             for(Long id : entity.getEmployees()) {
                 EmployeeResponseDTO queryResult = EmployeeAPI.getInstance().findEmployeeById(id, authToken);
 
