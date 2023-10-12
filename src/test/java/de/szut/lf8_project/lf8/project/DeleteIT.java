@@ -11,19 +11,8 @@ public class DeleteIT extends AbstractIntegrationTest {
     @WithMockUser(roles = "user")
     public void DeleteProject() throws Exception {
         ProjectEntity entity = projectRepository.save(new ProjectEntity());
-        String content = """
-                    {
-                        "customerId": 1,
-                        "responsibleEmployeeId": 2,
-                        "responsibleCustomerEmployeeId": 3,
-                        "description": "Test description",
-                        "employees": [1, 2, 2, 3],
-                        "startDate": "2023-10-06",
-                        "endDate": "2023-10-04"
-                    }
-                """;
                 this.mockMvc.perform(
-                 delete(String.format("/lf8/project/delete/%d", entity.getId())).content(content))
+                 delete(String.format("/lf8/project/delete/%d", entity.getId())))
                 .andExpect(status().is2xxSuccessful());
     }
 }
