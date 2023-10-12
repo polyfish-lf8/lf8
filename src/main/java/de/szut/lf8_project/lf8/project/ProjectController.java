@@ -125,7 +125,9 @@ public class ProjectController {
                     @Content(mediaType = MediaTypes.JSON,
                             schema = @Schema(implementation = GetProjectDto.class))
             }),
-            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "project not found" @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "project not found",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
     @DeleteMapping("delete/{projectId}")
