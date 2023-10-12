@@ -79,7 +79,27 @@ public class ProjectController {
             }
         }
 
-        return new ResponseEntity<>(mapper.mapToGetDto(service.create(entity)), HttpStatus.CREATED);
+        return new ResponseEntity<>(mapper.mapToGetProjectDto(service.create(entity)), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Get's a Project by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "getting successful", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.BAD_REQUEST, description = "invalid JSON posted",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @GetMapping (path = "get/{id}")
+    public ResponseEntity<GetProjectDto> getById(@PathVariable final Long id) {
+        final var entity = this.service.readById(id);
+        final GetProjectDto dto = this.mapper.mapToGetProjectDto(entity);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @Operation(summary = "Gets all of the created projects")
