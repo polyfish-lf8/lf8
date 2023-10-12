@@ -114,11 +114,28 @@ public class ProjectController {
     })
 
     @GetMapping (path = "get")
-    public List<GetProjectDto> findAll(){
+    public List<GetProjectDto> findAll() {
         return service.readAll().stream().map(mapper::mapToGetProjectDto).collect(Collectors.toList());
     }
 
-    @Operation(summary = "Gets the Employeelist of one Project")
+
+    @Operation(summary = "Deletes a project using it's id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "deletes the given project", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "project not found",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @DeleteMapping("delete/{projectId}")
+    public void DeleteProject(@PathVariable Long projectId) {
+        service.deleteProjectById(projectId);
+    }
+
+     @Operation(summary = "Gets the Employeelist of one Project")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "getting successful", content = {
                     @Content(mediaType = MediaTypes.JSON,
@@ -127,6 +144,7 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.BAD_REQUEST, description = "invalid JSON posted",
                     content = @Content),
             @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
+
                     content = @Content),
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
