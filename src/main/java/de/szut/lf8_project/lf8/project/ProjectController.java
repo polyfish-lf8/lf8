@@ -134,7 +134,7 @@ public class ProjectController {
     @GetMapping (path = "get/{id}/employees")
     public ResponseEntity<HashMap<Long, String>> getAllEmployeesByProjectId(@RequestHeader("Authorization") String authToken, @PathVariable final Long id) throws IOException {
         HashMap<Long, String> employeeResponseDTOList = new HashMap<>();
-        final var entity = this.service.readById(id);
+        final ProjectEntity entity = this.service.readById(id);
         for (long employeeID: entity.getEmployees()) {
             EmployeeResponseDTO foundEmployee = EmployeeAPI.getInstance().findEmployeeById(employeeID, authToken);
             employeeResponseDTOList.put(foundEmployee.getId(), String.format("%s %s", foundEmployee.getFirstName(), foundEmployee.getLastName()));
