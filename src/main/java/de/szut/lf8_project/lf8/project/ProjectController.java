@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -113,8 +112,34 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
+
     @GetMapping (path = "get")
     public List<GetProjectDto> findAll(){
         return service.readAll().stream().map(mapper::mapToGetProjectDto).collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Gets the Employeelist of one Project")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "getting successful", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.BAD_REQUEST, description = "invalid JSON posted",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @GetMapping (path = "get/{id}/employees")
+    public ResponseEntity<HashMap<Long, String>> getAllEmployeesByProjectId(@RequestHeader("Authorization") String authToken, @PathVariable final Long id) throws IOException {
+        HashMap<Long, String> employeeResponseDTOList = new HashMap<>();
+        final var entity = this.service.readById(id);
+        for (long employeeID: entity.getEmployees()) {
+            EmployeeResponseDTO foundEmployee = EmployeeAPI.getInstance().findEmployeeById(employeeID, authToken);
+            employeeResponseDTOList.put(foundEmployee.getId(), String.format("%s %s", foundEmployee.getFirstName(), foundEmployee.getLastName()));
+        }
+
+        return new ResponseEntity<>(employeeResponseDTOList, HttpStatus.OK);
     }
 }

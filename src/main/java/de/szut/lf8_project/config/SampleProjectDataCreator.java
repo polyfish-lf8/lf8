@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Set;
 
 @Component
 public class SampleProjectDataCreator implements ApplicationRunner {
