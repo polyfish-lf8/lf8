@@ -109,8 +109,8 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
-    @DeleteMapping("delete/[id]")
-    public void DeleteProject(long projectId) {
+    @DeleteMapping("delete/{projectId}")
+    public void DeleteProject(@PathVariable Long projectId) {
         service.deleteProjectById(projectId);
     }
 }
