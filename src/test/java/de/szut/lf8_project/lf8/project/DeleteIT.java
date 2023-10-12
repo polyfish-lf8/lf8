@@ -1,18 +1,12 @@
 package de.szut.lf8_project.lf8.project;
 
 import de.szut.lf8_project.testcontainers.AbstractIntegrationTest;
-import junit.framework.Assert;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.TestCase.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

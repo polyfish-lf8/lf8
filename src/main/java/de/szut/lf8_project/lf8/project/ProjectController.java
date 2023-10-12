@@ -134,7 +134,7 @@ public class ProjectController {
         service.deleteProjectById(projectId);
     }
 
-    @Operation(summary = "Gets the Employeelist of one Project")
+     @Operation(summary = "Gets the Employeelist of one Project")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "getting successful", content = {
                     @Content(mediaType = MediaTypes.JSON,
