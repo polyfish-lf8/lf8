@@ -3,9 +3,8 @@ package de.szut.lf8_project.lf8.project;
 import de.szut.employees.EmployeeAPI;
 import de.szut.employees.dto.EmployeeResponseDTO;
 import de.szut.lf8_project.exceptionHandling.InvalidDataException;
-import de.szut.lf8_project.exceptionHandling.InvalidDataException;
-import de.szut.lf8_project.lf8.project.dto.ProjectCreateDto;
-import de.szut.lf8_project.lf8.project.dto.ProjectGetDto;
+import de.szut.lf8_project.lf8.project.dto.CreateProjectDto;
+import de.szut.lf8_project.lf8.project.dto.GetProjectDto;
 import de.szut.lf8_project.utils.HTTPCodes;
 import de.szut.lf8_project.utils.MediaTypes;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +12,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,14 +21,14 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "lf8/project")
 public class ProjectController {
     private final ProjectService service;
     private final ProjectMapper mapper;
+
     public ProjectController(ProjectService service, ProjectMapper mapper) {
         this.service = service;
         this.mapper = mapper;
@@ -40,7 +38,7 @@ public class ProjectController {
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.CREATED, description = "creation successful", content = {
                     @Content(mediaType = MediaTypes.JSON,
-                            schema = @Schema(implementation = ProjectGetDto.class))
+                            schema = @Schema(implementation = GetProjectDto.class))
             }),
             @ApiResponse(responseCode = HTTPCodes.BAD_REQUEST, description = "invalid JSON posted",
                     content = @Content),
@@ -50,11 +48,11 @@ public class ProjectController {
                     content = @Content)
     })
     @PostMapping(path = "create")
-    public ResponseEntity<ProjectGetDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid ProjectCreateDto dto) throws IOException {
+    public ResponseEntity<GetProjectDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid CreateProjectDto dto) throws IOException {
         ProjectEntity entity = mapper.mapCreateDtoToEntity(dto);
 
         List<EmployeeResponseDTO> employees = new ArrayList<>();
-        if(entity.getEmployees() != null) {
+        if(entity.getEmployees() != null && !entity.getEmployees().isEmpty()) {
             for(Long id : entity.getEmployees()) {
                 EmployeeResponseDTO queryResult = EmployeeAPI.getInstance().findEmployeeById(id, authToken);
 
@@ -82,5 +80,37 @@ public class ProjectController {
         }
 
         return new ResponseEntity<>(mapper.mapToGetDto(service.create(entity)), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Gets all of the created projects")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "list of projects", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @GetMapping (path = "get")
+    public List<GetProjectDto> findAll() {
+        return service.readAll().stream().map(mapper::mapToGetDto).collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Deletes a project using it's id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "deletes the given project", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "project not found",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @DeleteMapping("delete/[id]")
+    public void DeleteProject(long projectId) {
+        service.deleteProjectById(projectId);
     }
 }

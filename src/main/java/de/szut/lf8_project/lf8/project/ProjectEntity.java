@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,16 +25,12 @@ public class ProjectEntity {
 
     @ElementCollection
     @CollectionTable
-    private List<Long> employees = new ArrayList<>();
+    private Set<Long> employees = new HashSet<>();
 
     @ElementCollection
     @CollectionTable
-    private List<String> skillSet = new ArrayList<>();
+    private Set<String> skillSet = new HashSet<>();
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
-
-    public Object getProjectLeader() {
-        return null;
-    }
 }

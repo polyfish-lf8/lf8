@@ -23,11 +23,8 @@ public class ProjectService {
     }
 
     public ProjectEntity readById(long id) {
-        Optional<ProjectEntity> queryedProject = this.repository.findById(id);
-        if (queryedProject.isEmpty()) {
-            return null;
-        }
-        return queryedProject.get();
+        Optional<ProjectEntity> queriedProject = this.repository.findById(id);
+        return queriedProject.orElse(null);
     }
     public void deleteProjectById(long projectId) {
         Optional<ProjectEntity> projectToDelete = repository.findById(projectId);
