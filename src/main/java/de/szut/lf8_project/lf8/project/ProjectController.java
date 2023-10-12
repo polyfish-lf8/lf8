@@ -115,7 +115,7 @@ public class ProjectController {
     })
     @GetMapping (path = "get")
     public List<GetProjectDto> findAll() {
-        return service.readAll().stream().map(mapper::mapToGetDto).collect(Collectors.toList());
+        return service.readAll().stream().map(mapper::mapToGetProjectDto).collect(Collectors.toList());
     }
 
     @Operation(summary = "Deletes a project using it's id")
