@@ -199,8 +199,7 @@ public class ProjectController {
                     @Content(mediaType = MediaTypes.JSON,
                             schema = @Schema(implementation = GetProjectDto.class))
             }),
-            //TODO: Fix the code here, it is not yet implemented it gets implemented in Waled's deletion task
-            @ApiResponse(responseCode = "404", description = "not found",
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "not found",
                     content = @Content),
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
