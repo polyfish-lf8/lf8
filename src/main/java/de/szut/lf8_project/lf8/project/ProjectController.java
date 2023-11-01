@@ -178,12 +178,12 @@ public class ProjectController {
         List<GetProjectDto> returnValue = new ArrayList<>();
 
         for (GetProjectDto project: allProjects) {
-            if(project.getEmployees() == null) {
+            if(project.getEmployees() == null)
                 throw new InvalidDataException("Project Employee List is empty");
-            }
-            if(project.getEmployees().contains(id)) {
+
+            if(project.getEmployees().contains(id))
                 returnValue.add(project);
-            }
+
         }
         return returnValue;
     }
