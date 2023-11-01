@@ -118,7 +118,6 @@ public class ProjectController {
         return service.readAll().stream().map(mapper::mapToGetProjectDto).collect(Collectors.toList());
     }
 
-
     @Operation(summary = "Deletes a project using it's id")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "deletes the given project", content = {
