@@ -8,7 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -45,5 +45,5 @@ public class EmployeeResponseDTO {
     private String phone;
 
     @JsonProperty("skillSet")
-    private ArrayList<String> skillSet;
+    private Set<SkillDTO> skillSet;
 }

@@ -1,15 +1,14 @@
 package de.szut.lf8_project.lf8.project.dto;
 
 import de.szut.lf8_project.exceptionHandling.InvalidDataException;
+import de.szut.lf8_project.lf8.timemanagement.dto.AddEmployeeToProjectDto;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.text.MessageFormat;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -29,10 +28,10 @@ public class CreateProjectDto {
     private Long responsibleCustomerEmployeeId;
 
     @Size(min = 1)
-    private Set<Long> employees;
+    private Set<AddEmployeeToProjectDto> employees;
 
     @Size(min = 1)
-    private Set<String> skillSet;
+    private Set<Long> skillSet;
 
     @Size(min = 1)
     @NotNull
@@ -41,7 +40,7 @@ public class CreateProjectDto {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public CreateProjectDto(Long customerId, Long responsibleEmployeeId, Long responsibleCustomerEmployeeId, Set<Long> employees, Set<String> skillSet, String description, LocalDate startDate, LocalDate endDate) {
+    public CreateProjectDto(Long customerId, Long responsibleEmployeeId, Long responsibleCustomerEmployeeId, Set<AddEmployeeToProjectDto> employees, Set<Long> skillSet, String description, LocalDate startDate, LocalDate endDate) {
         this.customerId = customerId;
         this.responsibleEmployeeId = responsibleEmployeeId;
         this.responsibleCustomerEmployeeId = responsibleCustomerEmployeeId;

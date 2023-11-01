@@ -1,5 +1,6 @@
 package de.szut.lf8_project.testcontainers;
 
+import de.szut.lf8_project.lf8.timemanagement.TimeManagementRepository;
 import okhttp3.*;
 import org.junit.jupiter.api.BeforeAll;
 import de.szut.lf8_project.lf8.project.ProjectRepository;
@@ -33,6 +34,9 @@ public class AbstractIntegrationTest {
 
     @Autowired
     protected ProjectRepository projectRepository;
+
+    @Autowired
+    protected TimeManagementRepository timeManagementRepository;
 
     @BeforeEach
     void setUp() {

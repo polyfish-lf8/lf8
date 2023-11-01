@@ -12,7 +12,7 @@ public class DeleteIT extends AbstractIntegrationTest {
     public void DeleteProject() throws Exception {
         ProjectEntity entity = projectRepository.save(new ProjectEntity());
                 this.mockMvc.perform(
-                 delete(String.format("/lf8/project/delete/%d", entity.getId())))
+                 delete(String.format("/lf8/project/%d", entity.getId())))
                 .andExpect(status().is2xxSuccessful());
     }
 }
