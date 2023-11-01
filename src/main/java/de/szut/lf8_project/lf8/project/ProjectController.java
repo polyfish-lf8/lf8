@@ -205,15 +205,19 @@ public class ProjectController {
                     content = @Content)
     })
     @DeleteMapping (path = "{projectId}/delete/employee/{employeeId}")
-    public void deleteEmployeeFromProject(@PathVariable Long employeeId, @PathVariable Long projectId) throws IOException {
+    public ResponseEntity<GetProjectDto> deleteEmployeeFromProject(@PathVariable Long employeeId, @PathVariable Long projectId) throws IOException {
         ProjectEntity project = service.readById(projectId);
         if(project == null)
             throw new InvalidDataException("Project not found");
+
+        if (project.getEmployees() == null)
+            throw new InvalidDataException("No employee in project");
 
         if(project.getEmployees().contains(employeeId))
             project.getEmployees().remove(employeeId);
         else
             throw new InvalidDataException("Employee could not be deleted");
+        return new ResponseEntity<>(mapper.mapToGetProjectDto(project), HttpStatus.OK);
     }
 
     @Operation(summary = "Gets all Projects of one Employee")
