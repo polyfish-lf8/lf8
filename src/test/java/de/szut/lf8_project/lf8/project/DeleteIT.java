@@ -36,8 +36,8 @@ public class DeleteIT extends AbstractIntegrationTest {
     @WithMockUser(roles = "user")
     public void DeleteEmployeeFromProject() throws Exception {
         Set<Long> employees =  new HashSet<Long>();
-        employees.add(Integer.toUnsignedLong(1));
-        employees.add(Integer.toUnsignedLong(2));
+        employees.add(1L);
+        employees.add(2L);
         ProjectEntity ent1 = projectRepository.save(new ProjectEntity(2L, 3L, 4L, 5L, employees, new HashSet<>(), "Hallo Arad", LocalDate.now(), LocalDate.now().plusDays(2)));
 
         this.mockMvc

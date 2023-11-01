@@ -204,7 +204,7 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
-    @DeleteMapping (path = "{projectId}/delete/employee/{employeeId}")
+    @DeleteMapping (path = "{projectId}/employees/{employeeId}")
     public ResponseEntity<GetProjectDto> deleteEmployeeFromProject(@PathVariable Long employeeId, @PathVariable Long projectId) throws IOException {
         ProjectEntity project = service.readById(projectId);
         if(project == null)
