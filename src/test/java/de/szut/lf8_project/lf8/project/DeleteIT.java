@@ -46,9 +46,5 @@ public class DeleteIT extends AbstractIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        //This will not work unless I do this terribleness,
-        //if you have a better way of checking this, please feel free to remove this comment
-        //and implement your changes.
-        //(I hate tests and I physically refuse to touch or interact with any automated tests again)
     }
 }
