@@ -25,7 +25,7 @@ public class EmployeeGetIT extends AbstractIntegrationTest {
 
     @Test
     @WithMockUser(roles = "user")
-    void findAll() throws Exception {
+    void getEmployeeProjects() throws Exception {
         Set<Long> employees =  new HashSet<Long>();
         employees.add(Integer.toUnsignedLong(1));
         employees.add(Integer.toUnsignedLong(2));
