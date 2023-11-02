@@ -159,7 +159,40 @@ public class ProjectController {
 
         return new ResponseEntity<>(employeeResponseDTOList, HttpStatus.OK);
     }
+  
+    @Operation(summary = "Updates the Project")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "update successful", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.BAD_REQUEST, description = "invalid JSON posted",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "not found"),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @PutMapping(path = "{id}")
+    public ResponseEntity <GetProjectDto> update(@PathVariable final Long id, @RequestBody @Valid CreateProjectDto dto) {
+        ProjectEntity projectEntity = service.readById(id);
 
+        if (projectEntity == null) {
+            throw new InvalidDataException("Project not found");
+        }
+
+        projectEntity.setEmployees(dto.getEmployees());
+        projectEntity.setEndDate(dto.getEndDate());
+        projectEntity.setStartDate(dto.getStartDate());
+        projectEntity.setSkillSet(dto.getSkillSet());
+        projectEntity.setDescription(dto.getDescription());
+        projectEntity.setResponsibleEmployeeId(dto.getResponsibleEmployeeId());
+        projectEntity.setResponsibleCustomerEmployeeId(dto.getResponsibleCustomerEmployeeId());
+
+        return new ResponseEntity<>(mapper.mapToGetProjectDto(service.create(projectEntity)), HttpStatus.OK);
+    }
+  
     @Operation(summary = "Gets all Projects of one Employee")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "list of projects", content = {
