@@ -23,6 +23,7 @@ public class TimeManagementService {
         return !repository.existsByEmployeeIdAndWorkingDates(employeeID, startDate, endDate);
     }
 
+    @Transactional
     public void deleteAllByProjectId(Long projectId) {
         repository.deleteAllByProjectId(projectId);
     }

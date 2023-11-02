@@ -35,6 +35,7 @@ public class ProjectService {
             throw new InvalidDataException("Project not found");
         }
     }
+    
     public void delete(ProjectEntity entity) {
         this.repository.delete(entity);
     }
