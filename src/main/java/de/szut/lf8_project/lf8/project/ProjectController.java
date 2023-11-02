@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -187,7 +188,7 @@ public class ProjectController {
 
         return new ResponseEntity<>(mapper.mapToGetProjectDto(service.create(entity)), HttpStatus.CREATED);
     }
-}
+
     @Operation(summary = "Gets all Projects of one Employee")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "list of projects", content = {
