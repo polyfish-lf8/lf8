@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "lf8/project")
 public class ProjectController {
-    private final TimeManagementService tmService;
+    private final TimeManagementService timeManagementService;
     private final ProjectService service;
     private final ProjectMapper mapper;
 
@@ -55,16 +55,16 @@ public class ProjectController {
 
         if(dto.getEmployees() != null && !dto.getEmployees().isEmpty()) {
             for (AddEmployeeToProjectDto employee : dto.getEmployees()) {
-                TimeManagementEntity tmEntity = new TimeManagementEntity();
+                TimeManagementEntity timeManagementEntity = new TimeManagementEntity();
 
-                tmEntity.setProjectId(entity.getId());
-                tmEntity.setStartWorkingDate(employee.getStartDate());
-                tmEntity.setEndWorkingDate(employee.getEndDate());
-                tmEntity.setEmployeeId(employee.getEmployeeId());
+                timeManagementEntity.setProjectId(entity.getId());
+                timeManagementEntity.setStartWorkingDate(employee.getStartDate());
+                timeManagementEntity.setEndWorkingDate(employee.getEndDate());
+                timeManagementEntity.setEmployeeId(employee.getEmployeeId());
 
-                tmService.create(tmEntity);
+                timeManagementService.create(timeManagementEntity);
                 
-                entity.getEmployees().add(tmEntity);
+                entity.getEmployees().add(timeManagementEntity);
             }
 
             service.create(entity);
@@ -174,7 +174,7 @@ public class ProjectController {
         if(entity == null)
             throw new InvalidDataException("The project was not found!");
 
-        HelperFunctions.checkEmployee(dto.getEmployeeId(), entity, dto.getStartDate(), dto.getEndDate(), authToken, tmService);
+        HelperFunctions.checkEmployee(dto.getEmployeeId(), entity, dto.getStartDate(), dto.getEndDate(), authToken, timeManagementService);
 
         TimeManagementEntity tmEntity = new TimeManagementEntity();
         tmEntity.setProjectId(entity.getId());
@@ -182,7 +182,7 @@ public class ProjectController {
         tmEntity.setStartWorkingDate(dto.getStartDate());
         tmEntity.setEndWorkingDate(dto.getEndDate());
 
-        tmService.create(tmEntity);
+        timeManagementService.create(tmEntity);
 
         entity.getEmployees().add(tmEntity);
 

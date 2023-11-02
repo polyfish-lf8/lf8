@@ -19,10 +19,10 @@ public class ProjectMapper {
     private TimeManagementService tmService;
 
     public GetProjectDto mapToGetProjectDto(ProjectEntity entity) {
-        Set<GetTimeManagementDto> employees = new HashSet<>();
+        Set<GetTimeManagementDto> timeManagedEmployees = new HashSet<>();
 
         for (TimeManagementEntity employee : entity.getEmployees()) {
-            employees.add(mapToGetTimeManagementDto(employee));
+            timeManagedEmployees.add(mapToGetTimeManagementDto(employee));
         }
 
         return new GetProjectDto(
@@ -31,7 +31,7 @@ public class ProjectMapper {
                 entity.getResponsibleEmployeeId(),
                 entity.getResponsibleCustomerEmployeeId(),
                 entity.getDescription(),
-                employees,
+                timeManagedEmployees,
                 entity.getSkillSet(),
                 entity.getStartDate(),
                 entity.getEndDate()
