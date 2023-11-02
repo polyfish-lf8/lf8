@@ -118,7 +118,6 @@ public class ProjectController {
         return service.readAll().stream().map(mapper::mapToGetProjectDto).collect(Collectors.toList());
     }
 
-
     @Operation(summary = "Deletes a project using it's id")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "deletes the given project", content = {
@@ -160,7 +159,7 @@ public class ProjectController {
 
         return new ResponseEntity<>(employeeResponseDTOList, HttpStatus.OK);
     }
-
+  
     @Operation(summary = "Updates the Project")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "update successful", content = {
@@ -192,5 +191,32 @@ public class ProjectController {
         projectEntity.setResponsibleCustomerEmployeeId(dto.getResponsibleCustomerEmployeeId());
 
         return new ResponseEntity<>(mapper.mapToGetProjectDto(service.create(projectEntity)), HttpStatus.OK);
+    }
+  
+    @Operation(summary = "Gets all Projects of one Employee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "list of projects", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @GetMapping (path = "get/employee/{id}/projects")
+    public List<GetProjectDto> getEmployeeProjects(@PathVariable final Long id){
+        List<GetProjectDto> allProjects = findAll();
+        List<GetProjectDto> returnValue = new ArrayList<>();
+
+        for (GetProjectDto project: allProjects) {
+            if(project.getEmployees() == null)
+                throw new InvalidDataException("Project Employee List is empty");
+
+            if(project.getEmployees().contains(id))
+                returnValue.add(project);
+
+        }
+        return returnValue;
     }
 }
