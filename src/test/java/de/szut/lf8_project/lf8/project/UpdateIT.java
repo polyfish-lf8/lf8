@@ -1,5 +1,6 @@
 package de.szut.lf8_project.lf8.project;
 
+import de.szut.lf8_project.lf8.timemanagement.TimeManagementEntity;
 import de.szut.lf8_project.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -18,8 +19,14 @@ public class UpdateIT extends AbstractIntegrationTest {
     @Test
     @WithMockUser(roles = "user")
     public void updateProject() throws Exception {
-        HashSet<Long> e = new HashSet<>(Set.of(1L, 2L));
+        Set<TimeManagementEntity> e = new HashSet<>();
         ProjectEntity mockProject = projectRepository.save(new ProjectEntity(2L, 3L, 4L, 5L, e, new HashSet<>(), "Hallo Waled", LocalDate.now(), LocalDate.now().plusDays(2)));
+
+        e.add(timeManagementRepository.save(new TimeManagementEntity(0L, mockProject.getId(), 1L, LocalDate.now(), LocalDate.now().plusDays(2))));
+        e.add(timeManagementRepository.save(new TimeManagementEntity(0L, mockProject.getId(), 1L, LocalDate.now(), LocalDate.now().plusDays(2))));
+
+        mockProject.setEmployees(e);
+        projectRepository.save(mockProject);
 
         String content = String.format("""
                 {

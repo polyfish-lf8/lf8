@@ -8,14 +8,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.is;
 
-public class getAllEmployeesOfOneProjectIT extends AbstractIntegrationTest {
+public class GetAllEmployeesOfOneProjectIT extends AbstractIntegrationTest {
 
     @Test
     @WithMockUser(roles = "user")

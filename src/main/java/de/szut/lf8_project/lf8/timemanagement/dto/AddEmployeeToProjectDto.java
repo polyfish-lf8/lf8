@@ -24,6 +24,9 @@ public class AddEmployeeToProjectDto {
         this.startDate = startDate;
         this.endDate = endDate;
 
+        if(employeeId == null || startDate == null || endDate == null)
+            throw new InvalidDataException("Something is null");
+
         if(startDate.isAfter(endDate))
             throw new InvalidDataException("The dates are not correct");
     }

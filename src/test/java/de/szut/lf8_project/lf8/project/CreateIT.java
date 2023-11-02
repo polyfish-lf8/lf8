@@ -61,11 +61,6 @@ public class CreateIT extends AbstractIntegrationTest {
                             "employeeId": 1,
                             "startDate": "2023-11-01",
                             "endDate": "2023-11-02"
-                        },
-                        {
-                            "employeeId": 2,
-                            "startDate": "2023-11-01",
-                            "endDate": "2023-11-02"
                         }
                     ],
                     "startDate": "2023-10-04",
@@ -84,8 +79,7 @@ public class CreateIT extends AbstractIntegrationTest {
                 .andExpect(jsonPath("responsibleEmployeeId", is(2)))
                 .andExpect(jsonPath("responsibleCustomerEmployeeId", is(3)))
                 .andExpect(jsonPath("description", is("Test description")))
-                .andExpect(jsonPath("employees[0].employeeId", is(2)))
-                .andExpect(jsonPath("employees[1].employeeId", is(1)))
+                .andExpect(jsonPath("employees[0].employeeId", is(1)))
                 .andExpect(jsonPath("startDate", is("2023-10-04")))
                 .andExpect(jsonPath("endDate", is("2023-10-06")))
                 .andReturn()

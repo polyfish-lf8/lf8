@@ -38,7 +38,7 @@ public class ProjectMapper {
         );
     }
 
-    public ProjectEntity mapCreateDtoToEntity(CreateProjectDto dto, String authToken) throws IOException {
+    public ProjectEntity mapCreateDtoToEntity(CreateProjectDto dto, String authToken) {
         ProjectEntity entity = new ProjectEntity();
 
         entity.setCustomerId(dto.getCustomerId());
@@ -52,9 +52,9 @@ public class ProjectMapper {
         if(dto.getEmployees() == null || dto.getEmployees().isEmpty())
             return entity;
 
-        dto.getEmployees().forEach(id -> {
+        dto.getEmployees().forEach(timeManagedEmployeeDto -> {
             try {
-                HelperFunctions.checkEmployee(id.getEmployeeId(), entity, dto.getStartDate(), dto.getEndDate(), authToken, tmService);
+                HelperFunctions.checkEmployee(timeManagedEmployeeDto.getEmployeeId(), entity, dto.getStartDate(), dto.getEndDate(), authToken, tmService);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

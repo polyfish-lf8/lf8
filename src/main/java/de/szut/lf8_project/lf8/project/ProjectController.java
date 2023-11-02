@@ -3,11 +3,11 @@ package de.szut.lf8_project.lf8.project;
 import de.szut.employees.EmployeeAPI;
 import de.szut.employees.dto.EmployeeResponseDTO;
 import de.szut.lf8_project.exceptionHandling.InvalidDataException;
-import de.szut.lf8_project.lf8.timemanagement.dto.AddEmployeeToProjectDto;
 import de.szut.lf8_project.lf8.project.dto.CreateProjectDto;
 import de.szut.lf8_project.lf8.project.dto.GetProjectDto;
 import de.szut.lf8_project.lf8.timemanagement.TimeManagementEntity;
 import de.szut.lf8_project.lf8.timemanagement.TimeManagementService;
+import de.szut.lf8_project.lf8.timemanagement.dto.AddEmployeeToProjectDto;
 import de.szut.lf8_project.utils.HTTPCodes;
 import de.szut.lf8_project.utils.HelperFunctions;
 import de.szut.lf8_project.utils.MediaTypes;
@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -63,7 +61,7 @@ public class ProjectController {
                 timeManagementEntity.setEmployeeId(employee.getEmployeeId());
 
                 timeManagementService.create(timeManagementEntity);
-                
+
                 entity.getEmployees().add(timeManagementEntity);
             }
 
@@ -189,8 +187,7 @@ public class ProjectController {
 
     @Operation(summary = "Updates the Project")
     @ApiResponses(value = {
-            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "update successful", content = {
-                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.SUCCESSFUL, description = "update successful", content = @Content),
             @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "not found"),
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
@@ -203,7 +200,21 @@ public class ProjectController {
             throw new InvalidDataException("Project not found");
         }
 
-        projectEntity.setEmployees(dto.getEmployees());
+        if(dto.getEmployees() != null) {
+            timeManagementService.deleteAllByProjectId(id);
+
+            if(!dto.getEmployees().isEmpty()) {
+                Set<TimeManagementEntity> processedEmployees = new HashSet<>();
+                dto.getEmployees().forEach(i -> processedEmployees.add(
+                        timeManagementService.create(
+                                new TimeManagementEntity(0L, projectEntity.getId(), i.getEmployeeId(), i.getStartDate(), i.getEndDate())
+                        )
+                ));
+
+                projectEntity.setEmployees(processedEmployees);
+            }
+        }
+
         projectEntity.setEndDate(dto.getEndDate());
         projectEntity.setStartDate(dto.getStartDate());
         projectEntity.setSkillSet(dto.getSkillSet());
@@ -252,19 +263,11 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
-    @GetMapping (path = "get/employee/{id}/projects")
-    public List<GetProjectDto> getEmployeeProjects(@PathVariable final Long id){
-        List<GetProjectDto> allProjects = findAll();
-        List<GetProjectDto> returnValue = new ArrayList<>();
+    @GetMapping (path = "employees/{id}/projects")
+    public ResponseEntity<List<GetProjectDto>> getEmployeeProjects(@PathVariable final Long id) {
+        ArrayList<GetProjectDto> result = new ArrayList<>();
+        timeManagementService.findProjectsByEmployeeId(id).forEach(project -> result.add(mapper.mapToGetProjectDto(project)));
 
-        for (GetProjectDto project: allProjects) {
-            if(project.getEmployees() == null)
-                throw new InvalidDataException("Project Employee List is empty");
-
-            if(project.getEmployees().contains(id))
-                returnValue.add(project);
-
-        }
-        return returnValue;
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
