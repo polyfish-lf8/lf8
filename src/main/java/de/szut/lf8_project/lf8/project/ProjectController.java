@@ -134,7 +134,7 @@ public class ProjectController {
         service.deleteProjectById(projectId);
     }
 
-     @Operation(summary = "Gets the Employeelist of one Project")
+    @Operation(summary = "Gets the Employeelist of one Project")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "getting successful", content = {
                     @Content(mediaType = MediaTypes.JSON,
@@ -159,7 +159,7 @@ public class ProjectController {
 
         return new ResponseEntity<>(employeeResponseDTOList, HttpStatus.OK);
     }
-  
+
     @Operation(summary = "Updates the Project")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "update successful", content = {
@@ -192,7 +192,34 @@ public class ProjectController {
 
         return new ResponseEntity<>(mapper.mapToGetProjectDto(service.create(projectEntity)), HttpStatus.OK);
     }
-  
+
+    @Operation(summary = "Delete a projects employee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "employee was deleted", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "not found",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @DeleteMapping (path = "{projectId}/employees/{employeeId}")
+    public ResponseEntity<GetProjectDto> deleteEmployeeFromProject(@PathVariable Long employeeId, @PathVariable Long projectId) throws IOException {
+        ProjectEntity project = service.readById(projectId);
+        if(project == null)
+            throw new InvalidDataException("Project not found");
+
+        if (project.getEmployees() == null)
+            throw new InvalidDataException("No employee in project");
+
+        if(project.getEmployees().contains(employeeId))
+            project.getEmployees().remove(employeeId);
+        else
+            throw new InvalidDataException("Employee could not be deleted");
+        return new ResponseEntity<>(mapper.mapToGetProjectDto(project), HttpStatus.OK);
+    }
+
     @Operation(summary = "Gets all Projects of one Employee")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "list of projects", content = {
