@@ -123,7 +123,7 @@ public class CreateIT extends AbstractIntegrationTest {
                                 .content(content)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", token))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @ParameterizedTest()
@@ -136,7 +136,7 @@ public class CreateIT extends AbstractIntegrationTest {
                             "description": "Test description"
                         }
                     """,
-            """
+                    """
                         {
                             "customerId": 1,
                             "responsibleEmployeeId": 2,
@@ -163,7 +163,7 @@ public class CreateIT extends AbstractIntegrationTest {
                             "endDate": "2023-10-04"
                         }
                     """,
-            """
+                    """
                         {
                             "customerId": 1,
                             "responsibleEmployeeId": 2,
@@ -189,10 +189,79 @@ public class CreateIT extends AbstractIntegrationTest {
                             "startDate": "2023-10-06",
                             "endDate": "2023-10-04"
                         }
+                    """,
                     """
+                        {
+                            "customerId": 1,
+                            "responsibleEmployeeId": 2,
+                            "responsibleCustomerEmployeeId": 3,
+                            "description": "Test description",
+                            "employees": [
+                                {
+                                    "employeeId": 1,
+                                    "startDate": "2023-11-01",
+                                    "endDate": "2023-11-02"
+                                },
+                                {
+                                    "employeeId": 2,
+                                    "startDate": "2023-11-01",
+                                    "endDate": "2023-11-02"
+                                },
+                                {
+                                    "employeeId": 37777,
+                                    "startDate": "2023-11-01",
+                                    "endDate": "2023-11-02"
+                                }
+                            ],
+                            "startDate": "2023-10-04",
+                            "endDate": "2023-10-06"
+                        }
+                        """,
+                        """
+                        {
+                            "customerId": 1,
+                            "responsibleEmployeeId": 223332,
+                            "responsibleCustomerEmployeeId": 3,
+                            "description": "Test description",
+                            "employees": [
+                                {
+                                    "employeeId": 1,
+                                    "startDate": "2023-11-01",
+                                    "endDate": "2023-11-02"
+                                },
+                                {
+                                    "employeeId": 2,
+                                    "startDate": "2023-11-01",
+                                    "endDate": "2023-11-02"
+                                }
+                            ],
+                            "startDate": "2023-10-04",
+                            "endDate": "2023-10-06"
+                        }
+                        """,
+                        """
+                                        {
+                                          "customerId": 1,
+                                          "responsibleEmployeeId": 1,
+                                          "responsibleCustomerEmployeeId": 0,
+                                          "employees": [
+                                            {
+                                              "employeeId": 1,
+                                              "startDate": "2023-11-05",
+                                              "endDate": "2023-11-05"
+                                            }
+                                          ],
+                                          "skillSet":[2],
+                                          "description": "string",
+                                          "startDate": "2023-11-02",
+                                          "endDate": "2023-11-02"
+                                        }
+                        """
     })
     public void checkBadRequest(String content) throws Exception {
-        this.mockMvc.perform(post("/lf8/project").content(content).contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post("/lf8/project")
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 }

@@ -4,6 +4,7 @@ import de.szut.employees.EmployeeAPI;
 import de.szut.employees.dto.EmployeeResponseDTO;
 import de.szut.employees.dto.SkillDTO;
 import de.szut.lf8_project.exceptionHandling.InvalidDataException;
+import de.szut.lf8_project.exceptionHandling.ResourceNotFoundException;
 import de.szut.lf8_project.lf8.project.ProjectEntity;
 import de.szut.lf8_project.lf8.timemanagement.TimeManagementService;
 
@@ -27,7 +28,7 @@ public class HelperFunctions {
 
         EmployeeResponseDTO query = EmployeeAPI.getInstance().findEmployeeById(id, authToken);
         if(query == null)
-            throw new InvalidDataException(String.format("The employee with the ID: %d was not found!", id));
+            throw new ResourceNotFoundException(String.format("The employee with the ID: %d was not found!", id));
 
         if(project.getSkillSet() == null)
             project.setSkillSet(new HashSet<>());

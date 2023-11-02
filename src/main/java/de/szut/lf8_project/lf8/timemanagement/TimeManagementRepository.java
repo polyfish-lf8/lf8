@@ -19,6 +19,11 @@ public interface TimeManagementRepository extends JpaRepository<TimeManagementEn
             @Param("endDate") LocalDate endDate);
 
     void deleteAllByProjectId(Long projectId);
+
     @Query("SELECT p FROM ProjectEntity p JOIN TimeManagementEntity t ON p.id = t.projectId WHERE t.employeeId = :employeeId")
     List<ProjectEntity> findProjectsByEmployeeId(Long employeeId);
+
+    void deleteByEmployeeIdAndProjectId(Long employeeId, Long projectId);
+
+    TimeManagementEntity findByEmployeeIdAndProjectId(Long employeeId, Long projectId);
 }

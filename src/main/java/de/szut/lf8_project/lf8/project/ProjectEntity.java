@@ -1,6 +1,7 @@
 package de.szut.lf8_project.lf8.project;
 
-import de.szut.lf8_project.lf8.timemanagement.TimeManagementEntity;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -25,8 +27,9 @@ public class ProjectEntity {
     private Long responsibleCustomerEmployeeId;
     private Long responsibleEmployeeId;
 
-    @OneToMany()
-    private Set<TimeManagementEntity> employees = new HashSet<>();
+    @ElementCollection
+    @CollectionTable
+    private Set<Long> employees = new HashSet<>();
 
     @ElementCollection
     @CollectionTable

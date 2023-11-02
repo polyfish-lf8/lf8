@@ -20,14 +20,14 @@ public class GetAllEmployeesOfOneProjectIT extends AbstractIntegrationTest {
     @WithMockUser(roles = "user")
     public void getAllEmployeesByProjectId() throws Exception {
         ProjectEntity mockProject = projectRepository.save(new ProjectEntity(2L, 3L, 4L, 5L, new HashSet<>(), new HashSet<>(), "Hallo Jana", LocalDate.now(), LocalDate.now().plusDays(2)));
-        HashSet<TimeManagementEntity> employees = new HashSet<>(
+        HashSet<Long> employees = new HashSet<>(
                 Set.of(
-                        new TimeManagementEntity(0L, 1L, 1L, LocalDate.now(), LocalDate.now().plusDays(1)),
-                        new TimeManagementEntity(0L, 1L, 2L, LocalDate.now(), LocalDate.now().plusDays(1))
+                        timeManagementRepository.save(new TimeManagementEntity(0L, 1L, 1L, LocalDate.now(), LocalDate.now().plusDays(1))).getId(),
+                        timeManagementRepository.save(new TimeManagementEntity(0L, 1L, 2L, LocalDate.now(), LocalDate.now().plusDays(1))).getId()
                 )
         );
 
-        mockProject.setEmployees(new HashSet<>(timeManagementRepository.saveAll(employees)));
+        mockProject.setEmployees(employees);
         projectRepository.save(mockProject);
 
         this.mockMvc.perform(get(String.format("/lf8/project/%d/employees", mockProject.getId())).header("Authorization", token))

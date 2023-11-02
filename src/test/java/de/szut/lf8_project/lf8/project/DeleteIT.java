@@ -8,7 +8,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DeleteIT extends AbstractIntegrationTest {
@@ -22,7 +24,7 @@ public class DeleteIT extends AbstractIntegrationTest {
     @WithMockUser(roles = "user")
     public void DeleteProject() throws Exception {
         ProjectEntity entity = projectRepository.save(new ProjectEntity());
-                this.mockMvc.perform(
+        this.mockMvc.perform(
                  delete(String.format("/lf8/project/%d", entity.getId())))
                 .andExpect(status().is2xxSuccessful());
     }
@@ -30,18 +32,19 @@ public class DeleteIT extends AbstractIntegrationTest {
     @Test
     @WithMockUser(roles = "user")
     public void DeleteEmployeeFromProject() throws Exception {
-        Set<TimeManagementEntity> e = new HashSet<>();
+        Set<Long> e = new HashSet<>();
         ProjectEntity mockProject = projectRepository.save(new ProjectEntity(2L, 3L, 4L, 5L, e, new HashSet<>(), "Hallo Waled", LocalDate.now(), LocalDate.now().plusDays(2)));
 
-        e.add(timeManagementRepository.save(new TimeManagementEntity(0L, mockProject.getId(), 1L, LocalDate.now(), LocalDate.now().plusDays(2))));
-        e.add(timeManagementRepository.save(new TimeManagementEntity(0L, mockProject.getId(), 1L, LocalDate.now(), LocalDate.now().plusDays(2))));
+        e.add(timeManagementRepository.save(new TimeManagementEntity(0L, mockProject.getId(), 1L, LocalDate.now(), LocalDate.now().plusDays(2))).getId());
+        e.add(timeManagementRepository.save(new TimeManagementEntity(0L, mockProject.getId(), 2L, LocalDate.now(), LocalDate.now().plusDays(2))).getId());
 
         mockProject.setEmployees(e);
         projectRepository.save(mockProject);
 
         this.mockMvc
-                .perform(delete(String.format("/lf8/project/%d/delete/employee/1", mockProject.getId())))
+                .perform(delete(String.format("/lf8/project/%d/employees/1", mockProject.getId())))
                 .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.employees.length()", is(1)))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();

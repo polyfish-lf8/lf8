@@ -40,16 +40,33 @@ public class AddEmployeeIT extends AbstractIntegrationTest {
                 .getContentAsString();
     }
 
-    @ParameterizedTest()
+    @Test
     @WithMockUser(roles = "user")
-    @ValueSource(strings = {
-            """
+    public void tryToAddNotExistingUser() throws Exception {
+        ProjectEntity mockProject = projectRepository.save(new ProjectEntity(2L, 3L, 4L, 5L, new HashSet<>(), new HashSet<>(), "Hallo Jana", LocalDate.now(), LocalDate.now().plusDays(2)));
+
+        String content = """
                 {
                     "employeeId": 999999999,
                     "startDate": "2023-11-01",
                     "endDate": "2023-11-02"
                 }
-            """,
+            """;
+
+        this.mockMvc.perform(
+                        post(String.format("/lf8/project/%d/employees", mockProject.getId()))
+                                .content(content)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", token))
+                .andExpect(status().isNotFound())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+    }
+
+    @ParameterizedTest()
+    @WithMockUser(roles = "user")
+    @ValueSource(strings = {
             """
                 {
                     "employeeId": 1,

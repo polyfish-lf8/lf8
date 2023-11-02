@@ -27,10 +27,10 @@ public class EmployeeGetIT extends AbstractIntegrationTest {
     @Test
     @WithMockUser(roles = "user")
     void getEmployeeProjects() throws Exception {
-        Set<TimeManagementEntity> employees =  new HashSet<>();
+        Set<Long> employees =  new HashSet<>();
         ProjectEntity ent1 = projectRepository.save(new ProjectEntity(0L, 3L, 4L, 5L, employees, new HashSet<>(), "Hallo Jana", LocalDate.now(), LocalDate.now().plusDays(2)));
 
-        employees.add(timeManagementRepository.save(new TimeManagementEntity(0L, ent1.getId(), 1L, LocalDate.now(), LocalDate.now().plusDays(2))));
+        employees.add(timeManagementRepository.save(new TimeManagementEntity(0L, ent1.getId(), 1L, LocalDate.now(), LocalDate.now().plusDays(2))).getId());
         ent1.setEmployees(employees);
         projectRepository.save(ent1);
 

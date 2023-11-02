@@ -1,5 +1,7 @@
 package de.szut.lf8_project.lf8.project;
 
+import de.szut.employees.EmployeeAPI;
+import de.szut.lf8_project.exceptionHandling.InvalidDataException;
 import de.szut.lf8_project.lf8.project.dto.CreateProjectDto;
 import de.szut.lf8_project.lf8.project.dto.GetProjectDto;
 import de.szut.lf8_project.lf8.timemanagement.TimeManagementEntity;
@@ -17,11 +19,12 @@ import java.util.Set;
 @AllArgsConstructor
 public class ProjectMapper {
     private TimeManagementService tmService;
+    private ProjectService service;
 
     public GetProjectDto mapToGetProjectDto(ProjectEntity entity) {
         Set<GetTimeManagementDto> timeManagedEmployees = new HashSet<>();
 
-        for (TimeManagementEntity employee : entity.getEmployees()) {
+        for (TimeManagementEntity employee : tmService.readAllById(entity.getEmployees())) {
             timeManagedEmployees.add(mapToGetTimeManagementDto(employee));
         }
 
@@ -38,8 +41,11 @@ public class ProjectMapper {
         );
     }
 
-    public ProjectEntity mapCreateDtoToEntity(CreateProjectDto dto, String authToken) {
+    public ProjectEntity mapCreateDtoToEntity(CreateProjectDto dto, String authToken) throws IOException {
         ProjectEntity entity = new ProjectEntity();
+
+        if(EmployeeAPI.getInstance().findEmployeeById(dto.getResponsibleEmployeeId(), authToken) == null)
+            throw new InvalidDataException(String.format("No employee with the ID %d found", dto.getResponsibleEmployeeId()));
 
         entity.setCustomerId(dto.getCustomerId());
         entity.setResponsibleEmployeeId(dto.getResponsibleEmployeeId());
