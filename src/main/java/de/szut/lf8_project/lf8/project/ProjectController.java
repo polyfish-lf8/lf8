@@ -109,7 +109,6 @@ public class ProjectController {
         return service.readAll().stream().map(mapper::mapToGetProjectDto).collect(Collectors.toList());
     }
 
-
     @Operation(summary = "Deletes a project using it's id")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "deletes the given project", content = {
@@ -152,6 +151,7 @@ public class ProjectController {
         return new ResponseEntity<>(employeeResponseDTOList, HttpStatus.OK);
     }
 
+
     @Operation(summary = "Adds an employee to a project")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.CREATED, description = "The employee was successful added to the project", content = {
@@ -166,6 +166,7 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
+
     @PostMapping(path = "{projectId}/employees")
     public ResponseEntity<GetProjectDto> addEmployeeToProject(@RequestHeader("Authorization") String authToken, @PathVariable Long projectId, @RequestBody @Valid AddEmployeeToProjectDto dto) throws IOException {
         ProjectEntity entity = service.readById(projectId);
@@ -185,5 +186,32 @@ public class ProjectController {
         entity.getEmployees().add(tmEntity);
 
         return new ResponseEntity<>(mapper.mapToGetProjectDto(service.create(entity)), HttpStatus.CREATED);
+    }
+}
+    @Operation(summary = "Gets all Projects of one Employee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "list of projects", content = {
+                    @Content(mediaType = MediaTypes.JSON,
+                            schema = @Schema(implementation = GetProjectDto.class))
+            }),
+            @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+    @GetMapping (path = "get/employee/{id}/projects")
+    public List<GetProjectDto> getEmployeeProjects(@PathVariable final Long id){
+        List<GetProjectDto> allProjects = findAll();
+        List<GetProjectDto> returnValue = new ArrayList<>();
+
+        for (GetProjectDto project: allProjects) {
+            if(project.getEmployees() == null)
+                throw new InvalidDataException("Project Employee List is empty");
+
+            if(project.getEmployees().contains(id))
+                returnValue.add(project);
+
+        }
+        return returnValue;
     }
 }
