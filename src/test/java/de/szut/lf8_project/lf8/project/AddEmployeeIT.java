@@ -24,8 +24,8 @@ public class AddEmployeeIT extends AbstractIntegrationTest {
         String content = """
                 {
                     "employeeId": 1,
-                    "startDate": "2023-11-01",
-                    "endDate": "2023-11-02"
+                    "startDate": "2023-12-01",
+                    "endDate": "2023-12-02"
                 }
                 """;
         this.mockMvc.perform(
