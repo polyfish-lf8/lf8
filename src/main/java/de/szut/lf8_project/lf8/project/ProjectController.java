@@ -2,36 +2,37 @@ package de.szut.lf8_project.lf8.project;
 
 import de.szut.employees.EmployeeAPI;
 import de.szut.employees.dto.EmployeeResponseDTO;
-import de.szut.lf8_project.exceptionHandling.InvalidDataException;
+import de.szut.lf8_project.exceptionHandling.ResourceNotFoundException;
 import de.szut.lf8_project.lf8.project.dto.CreateProjectDto;
 import de.szut.lf8_project.lf8.project.dto.GetProjectDto;
+import de.szut.lf8_project.lf8.timemanagement.TimeManagementEntity;
+import de.szut.lf8_project.lf8.timemanagement.TimeManagementService;
+import de.szut.lf8_project.lf8.timemanagement.dto.AddEmployeeToProjectDto;
 import de.szut.lf8_project.utils.HTTPCodes;
+import de.szut.lf8_project.utils.HelperFunctions;
 import de.szut.lf8_project.utils.MediaTypes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(value = "lf8/project")
 public class ProjectController {
+    private final TimeManagementService timeManagementService;
     private final ProjectService service;
     private final ProjectMapper mapper;
-
-    public ProjectController(ProjectService service, ProjectMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
 
     @Operation(summary = "Creates a new project using its required parameters")
     @ApiResponses(value = {
@@ -46,42 +47,31 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
-    @PostMapping(path = "create")
+    @PostMapping
     public ResponseEntity<GetProjectDto> create(@RequestHeader("Authorization") String authToken, @RequestBody @Valid CreateProjectDto dto) throws IOException {
-        ProjectEntity entity = mapper.mapCreateDtoToEntity(dto);
+        ProjectEntity entity = service.create(mapper.mapCreateDtoToEntity(dto, authToken));
 
-        List<EmployeeResponseDTO> employees = new ArrayList<>();
-        if(entity.getEmployees() != null && !entity.getEmployees().isEmpty()) {
-            for(Long id : entity.getEmployees()) {
-                EmployeeResponseDTO queryResult = EmployeeAPI.getInstance().findEmployeeById(id, authToken);
+        if(dto.getEmployees() != null && !dto.getEmployees().isEmpty()) {
+            for (AddEmployeeToProjectDto employee : dto.getEmployees()) {
+                TimeManagementEntity timeManagementEntity = new TimeManagementEntity();
 
-                if(queryResult == null)
-                    throw new InvalidDataException(MessageFormat.format("The employee with the ID: {0} was not found!", id));
+                timeManagementEntity.setProjectId(entity.getId());
+                timeManagementEntity.setStartWorkingDate(employee.getStartDate());
+                timeManagementEntity.setEndWorkingDate(employee.getEndDate());
+                timeManagementEntity.setEmployeeId(employee.getEmployeeId());
 
-                employees.add(queryResult);
+                timeManagementService.create(timeManagementEntity);
+
+                entity.getEmployees().add(timeManagementEntity.getId());
             }
+
+            entity = service.create(entity);
         }
 
-        if(entity.getEmployees() != null && !entity.getEmployees().isEmpty()) {
-            for(EmployeeResponseDTO employee : employees) {
-                int qualifications = 0;
-                if(employee.getSkillSet() != null && !employee.getSkillSet().isEmpty()) {
-                    for (String skill : employee.getSkillSet()) {
-                        if(entity.getSkillSet() != null && entity.getSkillSet().contains(skill)) {
-                            qualifications++;
-                        }
-                    }
-                }
-                if(qualifications > 0) {
-                    throw new InvalidDataException("Not skilled enough for this project.");
-                }
-            }
-        }
-
-        return new ResponseEntity<>(mapper.mapToGetProjectDto(service.create(entity)), HttpStatus.CREATED);
+        return new ResponseEntity<>(mapper.mapToGetProjectDto(entity), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Get's a Project by ID")
+    @Operation(summary = "Gets a project by the project ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "getting successful", content = {
                     @Content(mediaType = MediaTypes.JSON,
@@ -91,17 +81,23 @@ public class ProjectController {
                     content = @Content),
             @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
                     content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "the project was not found",
+                    content = @Content),
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
-    @GetMapping (path = "get/{id}")
-    public ResponseEntity<GetProjectDto> getById(@PathVariable final Long id) {
-        final var entity = this.service.readById(id);
+    @GetMapping (path = "{projectId}")
+    public ResponseEntity<GetProjectDto> getById(@PathVariable final Long projectId) {
+        final var entity = this.service.readById(projectId);
+
+        if(entity == null)
+            throw new ResourceNotFoundException("The project was not found");
+
         final GetProjectDto dto = this.mapper.mapToGetProjectDto(entity);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @Operation(summary = "Gets all of the created projects")
+    @Operation(summary = "Gets every project from the database")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "list of projects", content = {
                     @Content(mediaType = MediaTypes.JSON,
@@ -113,7 +109,7 @@ public class ProjectController {
                     content = @Content)
     })
 
-    @GetMapping (path = "get")
+    @GetMapping
     public List<GetProjectDto> findAll() {
         return service.readAll().stream().map(mapper::mapToGetProjectDto).collect(Collectors.toList());
     }
@@ -129,12 +125,15 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
-    @DeleteMapping("delete/{projectId}")
+    @DeleteMapping("{projectId}")
     public void DeleteProject(@PathVariable Long projectId) {
+        if(service.readById(projectId) == null)
+            throw new ResourceNotFoundException("The project was not found");
+
         service.deleteProjectById(projectId);
     }
 
-    @Operation(summary = "Gets the Employeelist of one Project")
+    @Operation(summary = "Gets the list of employee working on the project")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "getting successful", content = {
                     @Content(mediaType = MediaTypes.JSON,
@@ -143,26 +142,31 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.BAD_REQUEST, description = "invalid JSON posted",
                     content = @Content),
             @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
-
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "the project was not found",
                     content = @Content),
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
-    @GetMapping (path = "get/{id}/employees")
-    public ResponseEntity<HashMap<Long, String>> getAllEmployeesByProjectId(@RequestHeader("Authorization") String authToken, @PathVariable final Long id) throws IOException {
+    @GetMapping (path = "{projectId}/employees")
+    public ResponseEntity<HashMap<Long, String>> getAllEmployeesByProjectId(@RequestHeader("Authorization") String authToken, @PathVariable final Long projectId) throws IOException {
         HashMap<Long, String> employeeResponseDTOList = new HashMap<>();
-        final ProjectEntity entity = this.service.readById(id);
-        for (long employeeID: entity.getEmployees()) {
-            EmployeeResponseDTO foundEmployee = EmployeeAPI.getInstance().findEmployeeById(employeeID, authToken);
+        final ProjectEntity entity = this.service.readById(projectId);
+
+        if(entity == null)
+            throw new ResourceNotFoundException("The project was not found");
+
+        for (TimeManagementEntity employee : timeManagementService.readAllById(entity.getEmployees())) {
+            EmployeeResponseDTO foundEmployee = EmployeeAPI.getInstance().findEmployeeById(employee.getEmployeeId(), authToken);
             employeeResponseDTOList.put(foundEmployee.getId(), String.format("%s %s", foundEmployee.getFirstName(), foundEmployee.getLastName()));
         }
 
         return new ResponseEntity<>(employeeResponseDTOList, HttpStatus.OK);
     }
 
-    @Operation(summary = "Updates the Project")
+    @Operation(summary = "Adds an employee to a project")
     @ApiResponses(value = {
-            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "update successful", content = {
+            @ApiResponse(responseCode =  HTTPCodes.CREATED, description = "The employee was successful added to the project", content = {
                     @Content(mediaType = MediaTypes.JSON,
                             schema = @Schema(implementation = GetProjectDto.class))
             }),
@@ -170,19 +174,63 @@ public class ProjectController {
                     content = @Content),
             @ApiResponse(responseCode = HTTPCodes.NOT_AUTHORIZED, description = "not authorized",
                     content = @Content),
-            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "not found"),
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "The project was not found",
+                    content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
+                    content = @Content)
+    })
+
+    @PostMapping(path = "{projectId}/employees")
+    public ResponseEntity<GetProjectDto> addEmployeeToProject(@RequestHeader("Authorization") String authToken, @PathVariable Long projectId, @RequestBody @Valid AddEmployeeToProjectDto dto) throws IOException {
+        ProjectEntity entity = service.readById(projectId);
+        if(entity == null)
+            throw new ResourceNotFoundException("The project was not found!");
+
+        HelperFunctions.checkEmployee(dto.getEmployeeId(), entity, dto.getStartDate(), dto.getEndDate(), authToken, timeManagementService);
+
+        TimeManagementEntity tmEntity = new TimeManagementEntity();
+        tmEntity.setProjectId(entity.getId());
+        tmEntity.setEmployeeId(dto.getEmployeeId());
+        tmEntity.setStartWorkingDate(dto.getStartDate());
+        tmEntity.setEndWorkingDate(dto.getEndDate());
+
+        timeManagementService.create(tmEntity);
+
+        entity.getEmployees().add(tmEntity.getId());
+
+        return new ResponseEntity<>(mapper.mapToGetProjectDto(service.create(entity)), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Updates the Project")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = HTTPCodes.SUCCESSFUL, description = "update successful", content = @Content),
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "the project was not found"),
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
     @PutMapping(path = "{id}")
-    public ResponseEntity <GetProjectDto> update(@PathVariable final Long id, @RequestBody @Valid CreateProjectDto dto) {
+    public ResponseEntity <GetProjectDto> update(@RequestHeader("Authorization") String authToken, @PathVariable final Long id, @RequestBody @Valid CreateProjectDto dto) throws IOException {
         ProjectEntity projectEntity = service.readById(id);
+        mapper.mapCreateDtoToEntity(dto, authToken);
 
-        if (projectEntity == null) {
-            throw new InvalidDataException("Project not found");
+        if (projectEntity == null)
+            throw new ResourceNotFoundException("Project not found");
+
+        if(dto.getEmployees() != null) {
+            Set<Long> processedEmployees = new HashSet<>();
+            timeManagementService.deleteAllByProjectId(id);
+
+            if(!dto.getEmployees().isEmpty()) {
+                dto.getEmployees().forEach(i -> processedEmployees.add(
+                        timeManagementService.create(
+                                new TimeManagementEntity(0L, projectEntity.getId(), i.getEmployeeId(), i.getStartDate(), i.getEndDate())
+                        ).getId()
+                ));
+            }
+
+            projectEntity.setEmployees(processedEmployees);
         }
 
-        projectEntity.setEmployees(dto.getEmployees());
         projectEntity.setEndDate(dto.getEndDate());
         projectEntity.setStartDate(dto.getStartDate());
         projectEntity.setSkillSet(dto.getSkillSet());
@@ -195,28 +243,31 @@ public class ProjectController {
 
     @Operation(summary = "Delete a projects employee")
     @ApiResponses(value = {
-            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "employee was deleted", content = {
+            @ApiResponse(responseCode =  HTTPCodes.SUCCESSFUL, description = "Employee was deleted", content = {
                     @Content(mediaType = MediaTypes.JSON,
                             schema = @Schema(implementation = GetProjectDto.class))
             }),
-            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "not found",
+            @ApiResponse(responseCode = HTTPCodes.NOT_FOUND, description = "Project not found",
                     content = @Content),
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
     @DeleteMapping (path = "{projectId}/employees/{employeeId}")
-    public ResponseEntity<GetProjectDto> deleteEmployeeFromProject(@PathVariable Long employeeId, @PathVariable Long projectId) throws IOException {
+    public ResponseEntity<GetProjectDto> deleteEmployeeFromProject(@PathVariable Long employeeId, @PathVariable Long projectId) {
         ProjectEntity project = service.readById(projectId);
         if(project == null)
-            throw new InvalidDataException("Project not found");
+            throw new ResourceNotFoundException("Project not found");
 
         if (project.getEmployees() == null)
-            throw new InvalidDataException("No employee in project");
+            return new ResponseEntity<>(mapper.mapToGetProjectDto(project), HttpStatus.OK);
 
-        if(project.getEmployees().contains(employeeId))
-            project.getEmployees().remove(employeeId);
-        else
-            throw new InvalidDataException("Employee could not be deleted");
+        TimeManagementEntity tmEntity = timeManagementService.readByEmployeeIdAndProjectId(employeeId, projectId);
+
+        if(tmEntity != null)
+            project.getEmployees().remove(tmEntity.getId());
+
+        timeManagementService.deleteByEmployeeIdAndProjectId(employeeId, projectId);
+
         return new ResponseEntity<>(mapper.mapToGetProjectDto(project), HttpStatus.OK);
     }
 
@@ -231,19 +282,11 @@ public class ProjectController {
             @ApiResponse(responseCode = HTTPCodes.INTERNAL_SERVER_ERROR, description = "internal server error",
                     content = @Content)
     })
-    @GetMapping (path = "get/employee/{id}/projects")
-    public List<GetProjectDto> getEmployeeProjects(@PathVariable final Long id){
-        List<GetProjectDto> allProjects = findAll();
-        List<GetProjectDto> returnValue = new ArrayList<>();
+    @GetMapping (path = "employees/{id}/projects")
+    public ResponseEntity<List<GetProjectDto>> getEmployeeProjects(@PathVariable final Long id) {
+        ArrayList<GetProjectDto> result = new ArrayList<>();
+        timeManagementService.findProjectsByEmployeeId(id).forEach(project -> result.add(mapper.mapToGetProjectDto(project)));
 
-        for (GetProjectDto project: allProjects) {
-            if(project.getEmployees() == null)
-                throw new InvalidDataException("Project Employee List is empty");
-
-            if(project.getEmployees().contains(id))
-                returnValue.add(project);
-
-        }
-        return returnValue;
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

@@ -59,3 +59,14 @@ docker compose up
 1. Auf der Projektebene [GetBearerToken.http](./GetBearerToken.http) öffnen.
 2. Neben der Request auf den grünen Pfeil drücken
 3. Aus dem Reponse das access_token kopieren
+
+# Für Herr Schwerk
+Uns sind beim Testen keine Fehler aufgefallen. Wir haben 30 Tests und diese sind alle Erfolgreich durchlaufen. Sollten sie Fehler bei den Tests bekommen,
+versuchen sie erst die Beispieldaten in der SampleProjectDataCreator.java zu deaktivieren. Der Grund dafür, dass wir keine Relations verwendet haben, ist weil,
+wir dadurch einen Loop erzeugt haben und am Ende eine 100 KB Antwort vom Server erhalten haben, welche nur ein Projekt und ein Mitarbeiter beihielt.
+
+Auch haben wir keinen Fehler dafür eingebaut, wenn ein Nutzer versuchen sollte, einen Mitarbeiter aus einem Projekt zu entfernen, der in diesem Projekt nicht eingetragen ist.
+Dies liegt daran, dass so der Nutzer direkt einmal die neuen Daten kriegt und sich so der Client einfach aktualisiert.
+
+Als extra Feature haben wir einen Cache für die API Verbindung zum Employee Service eingebaut. Dieser Speichert die Daten so lange, wie sie laut dem Server gültig sind.
+Sollten sie diesen Cache nicht verwenden wollen, müssen sie lediglich das Argument '--disable-cache' an das Programm, beim Start, übergeben.

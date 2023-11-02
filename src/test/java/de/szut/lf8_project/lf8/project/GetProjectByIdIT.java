@@ -21,7 +21,7 @@ public class GetProjectByIdIT extends AbstractIntegrationTest {
         ProjectEntity mockProject = projectRepository.save(new ProjectEntity(2L, 3L, 4L, 5L, new HashSet<>(), new HashSet<>(), "Hallo Jana", LocalDate.now(), LocalDate.now().plusDays(2)));
 
         this.mockMvc.perform(
-                get(String.format("/lf8/project/get/%d", mockProject.getId())))
+                get(String.format("/lf8/project/%d", mockProject.getId())))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("id", is(mockProject.getId().intValue())))
                 .andExpect(jsonPath("customerId", is(mockProject.getCustomerId().intValue())))

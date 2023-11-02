@@ -4,10 +4,8 @@ import de.szut.lf8_project.utils.HTTPCodes;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -18,7 +16,7 @@ import java.util.Date;
 public class GlobalExceptionHandler {
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "500", description = "invalid JSON posted",
+            @ApiResponse(responseCode = "404", description = "the given resource was not found",
                     content = @Content)
     })
     @ExceptionHandler(ResourceNotFoundException.class)

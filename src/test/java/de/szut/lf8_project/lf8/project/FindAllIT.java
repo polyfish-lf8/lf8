@@ -25,7 +25,7 @@ public class FindAllIT extends AbstractIntegrationTest {
         var ent1 = projectRepository.save(new ProjectEntity());
         var ent2 = projectRepository.save(new ProjectEntity());
 
-        final var contentAsString = this.mockMvc.perform(get("/lf8/project/get"))
+        this.mockMvc.perform(get("/lf8/project"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(ent1.getId().intValue())))
